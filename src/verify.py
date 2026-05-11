@@ -1,0 +1,28 @@
+from flask import Blueprint,redirect,url_for,render_template,request,session,flash
+from flask_login import current_user,login_user
+from src.wtform import Verify
+from src.models.user import User
+
+verify_route = Blueprint('verify',__name__)
+
+
+@verify_route.route('/verify-otp', methods=['GET', 'POST'])
+def verify():
+    if current_user.is_authenticated:
+        return redirect(url_for('login.login'))
+    form = Verify()
+    if request.method == 'POST':
+        user_id = session.get('user_id')
+        user = User.query.get(user_id)
+        entered_otp = form.otp.data
+        if entered_otp == session.get('otp'):
+            session['otp_verified'] = True
+            login_user(user,remember=True)
+            print('logged in')
+            session.pop('otp')  # clear it
+        
+            return redirect(url_for('dashboard.dashboard'))
+        else:
+            flash('Incorrect OTP. Please try again.', 'danger')
+
+    return render_template('verify.html',form = form)

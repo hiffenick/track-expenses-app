@@ -1,0 +1,136 @@
+:root {
+  --bg: #e6e8ea;
+  --text: #212529;
+  --primary: #0d6efd;
+  --accent: #ffc107;
+  --card: #ffffff;
+  --muted: #6c757d;
+}
+
+[data-theme="dark"] {
+  --bg: #121212;
+  --text: #e0e0e0;
+  --primary: #66b2ff;
+  --accent: #ffcd39;
+  --card: #1f1f1f;
+  --muted: #adb5bd;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.logo span {
+  color: var(--primary);
+}
+
+.navbar {
+  background-color: var(--card) !important;
+  transition: background-color 0.3s;
+}
+
+.hero {
+  min-height: 80vh;
+  background-color: transparent;
+}
+
+.highlight {
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.cta-btn {
+  background-color: var(--primary);
+  border: none;
+}
+
+.cta-btn:hover {
+  background-color: darken(var(--primary), 10%);
+}
+
+#modeToggle{
+  border-radius: 29% !important;
+}
+
+.card {
+  background-color: var(--card);
+  color: var(--text); /* ✅ Ensures card text adapts to theme */
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+
+section.container {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+form label {
+  font-weight: 500;
+}
+
+.list-group-item {
+  color: var(--text);
+  border-color: rgba(0,0,0,0.1);
+}
+
+.text-muted {
+  color: var(--muted) !important;
+}
+/* GREETING PAGE STRAT */
+
+/* Updated Greeting Page Style */
+.greeting-box {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  backdrop-filter: blur(6px);
+  border-radius: 16px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+  transition: background 0.3s ease;
+}
+
+.greeting-title {
+  font-size: 2.75rem;
+}
+
+.greeting-subtitle {
+  font-size: 1.15rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.features-section {
+  background-color: var(--card);
+  transition: background-color 0.3s ease;
+}
+
+.features-section h2 {
+  color: var(--primary);
+}
+
+/* GREETING PAGE END  */
+
+/* EXPENSE CHART */
+/* Chart Fix */
+.chart-wrapper {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  aspect-ratio: 1 / 1;
+  position: relative;
+}
+
+#expenseChart {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}

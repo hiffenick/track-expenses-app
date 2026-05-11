@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="container py-5 text-center">
+  <h2 class="mb-4">Welcome Back, {{ user }}!</h2>
+  <!-- <button id="showDashboardBtn" class="btn btn-primary mb-4">View Dashboard</button> -->
+
+  <div id="overviewCard" class=" d-md-flex justify-content-center gap-4 flex-wrap text-start">
+    <!-- Summary Card -->
+    <div class="card shadow-sm p-4 mb-3" style="flex: 1 1 300px; max-width: 400px;">
+      <h5 class="mb-3">Your Expense Overview</h5>
+      <ul class="list-group list-group-flush mb-4">
+        <li class="list-group-item d-flex justify-content-between bg-transparent">
+          <span>Total Spent:</span><strong id="totalSpent"></strong>
+        </li>
+        <li class="list-group-item d-flex justify-content-between bg-transparent">
+          <span>This Month:</span><strong id="monthlySpent"></strong>
+        </li>
+        <li class="list-group-item d-flex justify-content-between bg-transparent">
+          <span>Top Category:</span><strong id="topCategory"></strong>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Chart Card -->
+    <div class="card shadow-sm p-4" style="flex: 1 1 300px; max-width: 500px;">
+      <h5 class="mb-3">Spending Breakdown</h5>
+      <div class="chart-wrapper">
+        <canvas id="expenseChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Embed summary data as raw JSON -->
+  <script id="summary-data" type="application/json">
+    {{ summary | tojson }}
+  </script>
+</section>
+{% endblock %}

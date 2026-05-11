@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8 col-sm-10">
+      <h1 class="mb-4 fw-bold text-center">Get Started with Expense Insight</h1>
+      <p class="lead text-center mb-5">
+        Start tracking your expenses today and take control of your finances.
+      </p>
+
+      <form id="getStartedForm" action="#" method="POST" novalidate>
+        <div class="mb-3">
+          <label for="name" class="form-label fw-semibold">Your Name</label>
+          <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name" required />
+          <div class="invalid-feedback">Please enter your name.</div>
+        </div>
+
+        <div class="mb-3">
+          <label for="monthlyBudget" class="form-label fw-semibold">Monthly Budget (₹)</label>
+          <input type="number" class="form-control" id="monthlyBudget" name="monthlyBudget" placeholder="Enter your monthly budget" required min="1" />
+          <div class="invalid-feedback">Please enter a valid budget.</div>
+        </div>
+
+        <div class="mb-3">
+          <label for="startDate" class="form-label fw-semibold">Start Date</label>
+          <input type="date" class="form-control" id="startDate" name="startDate" required />
+          <div class="invalid-feedback">Please select a start date.</div>
+        </div>
+
+        <div class="d-grid">
+          <button type="submit" class="btn btn-primary btn-lg">Start Tracking</button>
+        </div>
+      </form>
+
+      <p class="mt-4 text-center">
+        Already started? <a href="{{ url_for('home.home') }}">Go back to Home</a>
+      </p>
+    </div>
+  </div>
+</section>
+{% endblock content %}
