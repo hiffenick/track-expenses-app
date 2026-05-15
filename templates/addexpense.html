@@ -1,0 +1,478 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+
+<div class="dashboard-root">
+
+  <!-- Sidebar (same as dashboard) -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <span class="brand-name">Expenso</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="{{ url_for('dashboard.dashboard') }}" class="nav-item" data-page="dashboard">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+          </svg>
+        </span>
+        <span class="nav-label">Dashboard</span>
+      </a>
+
+      <a href="{{ url_for('addexpense.addexpense') }}" class="nav-item active" data-page="add-expense">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+          </svg>
+        </span>
+        <span class="nav-label">Add Expense</span>
+      </a>
+
+      <a href="" class="nav-item" data-page="view-expenses">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+          </svg>
+        </span>
+        <span class="nav-label">View Expenses</span>
+      </a>
+
+      <a href="" class="nav-item" data-page="analytics">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/>
+            <line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/>
+          </svg>
+        </span>
+        <span class="nav-label">Analytics</span>
+      </a>
+
+      <a href="" class="nav-item" data-page="categories">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+          </svg>
+        </span>
+        <span class="nav-label">Categories</span>
+      </a>
+
+      <div class="nav-divider"></div>
+
+      <a href="" class="nav-item" data-page="profile">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+          </svg>
+        </span>
+        <span class="nav-label">Profile &amp; Settings</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <div class="user-avatar"></div>
+        <div class="user-info">
+          <span class="user-name"></span>
+          <span class="user-role">Personal Account</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="page-breadcrumb">
+          <span class="breadcrumb-section">Dashboard</span>
+          <span class="breadcrumb-sep">/</span>
+          <span class="breadcrumb-current">Add Expense</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn" title="Search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </button>
+        <button class="icon-btn notif-btn" title="Notifications">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          <span class="notif-dot"></span>
+        </button>
+        <div class="topbar-avatar"></div>
+      </div>
+    </header>
+
+    <!-- Page Body -->
+    <div class="dashboard-body">
+
+      <!-- Page header -->
+      <div class="ae-page-header">
+        <div>
+          <p class="welcome-greeting">Track your spending</p>
+          <h1 class="welcome-name">Add Expense</h1>
+        </div>
+        <a href="" class="ae-back-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+          </svg>
+          View All Expenses
+        </a>
+      </div>
+
+      <!-- Flash messages -->
+      <!-- {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="ae-flash-group">
+            {% for category, message in messages %}
+              <div class="ae-flash ae-flash--{{ category }}">
+                <span class="ae-flash-icon">
+                  {% if category == 'success' %}✓{% else %}!{% endif %}
+                </span>
+                {{ message }}
+                <button class="ae-flash-close" onclick="this.parentElement.remove()">×</button>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %} -->
+
+      <!-- Two-column layout: form + summary panel -->
+      <div class="ae-layout">
+
+        <!-- ── Form Card ─────────────────────────────────────── -->
+        <div class="ae-form-card card">
+          <div class="ae-form-card-header">
+            <div class="ae-card-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="16"/>
+                <line x1="8" y1="12" x2="16" y2="12"/>
+              </svg>
+            </div>
+            <h2>New Transaction</h2>
+          </div>
+
+          <form id="addExpenseForm"
+                action="{{ url_for('addexpense.addexpense') }}"
+                method="POST"
+                novalidate>
+
+            <!-- CSRF token (if using Flask-WTF) -->
+            <!-- <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"> -->
+             {{ form.hidden_tag() }}
+
+            <!-- Amount — hero field, prominent at top -->
+            <div class="ae-amount-field">
+              <span class="ae-currency-symbol">₹</span>
+              <input
+                type="number"
+                id="amount"
+                name="amount"
+                class="ae-amount-input"
+                placeholder="0.00"
+                min="0.01"
+                step="0.01"
+                inputmode="decimal"
+                autocomplete="off"
+                required>
+            </div>
+
+            <div class="ae-fields">
+
+              <!-- Title -->
+              <div class="ae-field">
+                <label class="ae-label" for="title">
+                  Title <span class="ae-required">*</span>
+                </label>
+                <div class="ae-input-wrap">
+                  <span class="ae-input-icon">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                  </span>
+                  <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    class="ae-input"
+                    placeholder="e.g. Lunch at Café, Uber ride…"
+                    maxlength="120"
+                    autocomplete="off"
+                    required>
+                </div>
+                <span class="ae-field-error" id="titleError"></span>
+              </div>
+
+              <!-- Category -->
+              <div class="ae-field">
+                <label class="ae-label" for="category">
+                  Category <span class="ae-required">*</span>
+                </label>
+                <div class="ae-cat-grid" id="categoryGrid">
+                  {% for cat in categories %}
+                    <button
+                      type="button"
+                      class="ae-cat-chip"
+                      data-value="{{ cat.category_id}}"
+                      data-label="{{ cat.name }}">
+                      <span class="ae-cat-emoji">{{ cat.icon }}</span>
+                      <span class="ae-cat-label">{{ cat.name }}</span>
+
+                      {% if cat.is_default == 0%}
+                        <span class="ae-cat-delete">×</span>
+                      {% endif %}
+                    </button>
+                  {% endfor %}
+
+                </div>
+                <input type="hidden" id="category" name="category" required>
+                <span class="ae-field-error" id="categoryError"></span>
+              </div>
+              <div class="customcat">
+                <!-- ADD THIS -->
+                    <button
+                      type="button"
+                      class="ae-cat-chip ae-cat-chip-add"
+                      id="openCustomCategory">
+
+                      <span class="ae-cat-plus">+</span>
+                      <span class="ae-cat-label">Custom</span>
+
+                    </button>
+              </div>
+              <!-- Date -->
+              <div class="ae-field">
+                <label class="ae-label" for="date">
+                  Date <span class="ae-required">*</span>
+                </label>
+                <div class="ae-input-wrap">
+                  <span class="ae-input-icon">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="4" width="18" height="18" rx="2"/>
+                      <line x1="16" y1="2" x2="16" y2="6"/>
+                      <line x1="8" y1="2" x2="8" y2="6"/>
+                      <line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                  </span>
+                  <input
+                    type="date"
+                    id="date"
+                    name="date"
+                    class="ae-input"
+                    value="{{ today }}"
+                    max="{{ today }}"
+                    required>
+                </div>
+                <span class="ae-field-error" id="dateError"></span>
+              </div>
+
+              <!-- Note -->
+              <div class="ae-field">
+                <label class="ae-label" for="note">
+                  Note <span class="ae-optional">(optional)</span>
+                </label>
+                <div class="ae-input-wrap ae-textarea-wrap">
+                  <span class="ae-input-icon ae-input-icon--top">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                  </span>
+                  <textarea
+                    id="note"
+                    name="note"
+                    class="ae-input ae-textarea"
+                    placeholder="Any additional notes…"
+                    rows="3"
+                    maxlength="400"></textarea>
+                </div>
+                <span class="ae-char-count" id="noteCount">0 / 400</span>
+              </div>
+
+            </div><!-- /ae-fields -->
+
+            <!-- Form actions -->
+            <div class="ae-form-actions">
+              <button type="button" class="ae-btn ae-btn-ghost" id="clearBtn">
+                Clear form
+              </button>
+              <button type="submit" class="ae-btn ae-btn-primary" id="submitBtn">
+                <span class="ae-btn-text">Add Expense</span>
+                <span class="ae-btn-loader" hidden>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="ae-spin">
+                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                  </svg>
+                  Saving…
+                </span>
+              </button>
+            </div>
+
+          </form>
+        </div>
+
+        <!-- ── Side Panel ─────────────────────────────────────── -->
+        <div class="ae-side">
+
+          <!-- Live preview card -->
+          <div class="card ae-preview-card">
+            <div class="card-header">
+              <h3>Preview</h3>
+              <span class="ae-preview-badge" id="previewBadge">Unsaved</span>
+            </div>
+            <div class="ae-preview-body">
+              <div class="ae-preview-amount" id="previewAmount">₹0.00</div>
+              <div class="ae-preview-title" id="previewTitle">Transaction title</div>
+              <div class="ae-preview-meta">
+                <span class="ae-preview-chip" id="previewCat">
+                  <span id="previewCatEmoji">💸</span>
+                  <span id="previewCatLabel">No category</span>
+                </span>
+                <span class="ae-preview-date" id="previewDate">—</span>
+              </div>
+              <div class="ae-preview-note" id="previewNote"></div>
+            </div>
+          </div>
+
+          <!-- Tips card -->
+          <div class="card ae-tips-card">
+            <div class="card-header">
+              <h3>Quick Tips</h3>
+            </div>
+            <ul class="ae-tips-list">
+              <li>
+                <span class="ae-tip-dot" style="background:var(--accent)"></span>
+                Use descriptive titles to find expenses easily later.
+              </li>
+              <li>
+                <span class="ae-tip-dot" style="background:var(--teal)"></span>
+                Tag every entry with a category for better analytics.
+              </li>
+              <li>
+                <span class="ae-tip-dot" style="background:var(--violet)"></span>
+                Add a note to remember what the expense was for.
+              </li>
+              <li>
+                <span class="ae-tip-dot" style="background:var(--rose)"></span>
+                Log expenses on the same day to stay accurate.
+              </li>
+            </ul>
+          </div>
+
+        </div><!-- /ae-side -->
+
+      </div><!-- /ae-layout -->
+
+    </div><!-- /dashboard-body -->
+  </main>
+</div>
+
+<!-- Sidebar overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- Toast -->
+<div class="toast" id="navToast"></div>
+
+<!-- Category Modal -->
+<div class="ae-modal-overlay" id="categoryModal">
+
+  <div class="ae-modal">
+
+    <!-- Header -->
+    <div class="ae-modal-header">
+
+      <h2>Create Category</h2>
+
+      <button
+        type="button"
+        class="ae-modal-close"
+        id="closeCategoryModal">
+        ×
+      </button>
+
+    </div>
+
+    <!-- Body -->
+    <div class="ae-modal-body">
+
+      <div class="ae-field">
+
+        <label class="ae-label">
+          Category Name
+        </label>
+
+        <input
+          type="text"
+          class="ae-input"
+          id="customCategoryName"
+          placeholder="e.g. Pets">
+
+      </div>
+
+      <div class="ae-field">
+
+        <label class="ae-label">
+          Emoji
+        </label>
+
+        <input
+          type="text"
+          class="ae-input"
+          id="customCategoryEmoji"
+          placeholder="🐱"
+          maxlength="2">
+
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="ae-modal-footer">
+
+      <button
+        type="button"
+        class="ae-btn ae-btn-ghost"
+        id="cancelCategoryModal">
+
+        Cancel
+
+      </button>
+
+      <button
+        type="button"
+        class="ae-btn ae-btn-primary"
+        id="saveCategoryBtn">
+
+        Save Category
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Pass categories to JS -->
+
+<!-- 
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='js/add_expense.js') }}"></script> -->
+{% endblock %}

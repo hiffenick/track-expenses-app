@@ -3,15 +3,17 @@ from flask import Flask
 from src.extensions import bcrypt
 from src.extensions import csrf
 
+from src.models.user import User
+from src.models.expense import expenses
+from src.models.cateogries import Category
+
 from src.config import Config
+from flask_migrate import Migrate
 from src.extensions import db
 from src.home import home_route
 from src.test import test_route
 from src.verify import verify_route
 from src.login import login_route
-from src.models.user import User
-from src.models.expense import expenses
-from flask_migrate import Migrate
 from src.logout import logout_route
 from flask_login import login_manager
 from src.signup import signup_route
@@ -20,6 +22,7 @@ from src.greeting import greeting_route
 from src.extensions import mail
 from src.extensions import loginmanager
 from src.dashboard import dashboard_route
+from src.addexpense import addexpense_route
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 staticpath = os.path.join(os.path.dirname(basedir),'static')
@@ -45,4 +48,5 @@ def createapp():
     app.register_blueprint(logout_route)
     app.register_blueprint(verify_route)
     app.register_blueprint(greeting_route)
+    app.register_blueprint(addexpense_route)
     return app  

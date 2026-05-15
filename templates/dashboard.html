@@ -1,38 +1,292 @@
 {% extends 'base.html' %}
 {% block content %}
-<section class="container py-5 text-center">
-  <h2 class="mb-4">Welcome Back, {{ user }}!</h2>
-  <!-- <button id="showDashboardBtn" class="btn btn-primary mb-4">View Dashboard</button> -->
 
-  <div id="overviewCard" class=" d-md-flex justify-content-center gap-4 flex-wrap text-start">
-    <!-- Summary Card -->
-    <div class="card shadow-sm p-4 mb-3" style="flex: 1 1 300px; max-width: 400px;">
-      <h5 class="mb-3">Your Expense Overview</h5>
-      <ul class="list-group list-group-flush mb-4">
-        <li class="list-group-item d-flex justify-content-between bg-transparent">
-          <span>Total Spent:</span><strong id="totalSpent"></strong>
-        </li>
-        <li class="list-group-item d-flex justify-content-between bg-transparent">
-          <span>This Month:</span><strong id="monthlySpent"></strong>
-        </li>
-        <li class="list-group-item d-flex justify-content-between bg-transparent">
-          <span>Top Category:</span><strong id="topCategory"></strong>
-        </li>
-      </ul>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+
+<div class="dashboard-root">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <span class="brand-name">Expenso</span>
     </div>
 
-    <!-- Chart Card -->
-    <div class="card shadow-sm p-4" style="flex: 1 1 300px; max-width: 500px;">
-      <h5 class="mb-3">Spending Breakdown</h5>
-      <div class="chart-wrapper">
-        <canvas id="expenseChart"></canvas>
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" data-page="dashboard">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+          </svg>
+        </span>
+        <span class="nav-label">Dashboard</span>
+      </a>
+
+      <a href="{{url_for('addexpense.show_addexpense')}}" class="nav-item" data-page="add-expense">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+          </svg>
+        </span>
+        <span class="nav-label">Add Expense</span>
+      </a>
+
+      <a href="#" class="nav-item" data-page="view-expenses">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+          </svg>
+        </span>
+        <span class="nav-label">View Expenses</span>
+      </a>
+
+      <a href="#" class="nav-item" data-page="analytics">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/>
+            <line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/>
+          </svg>
+        </span>
+        <span class="nav-label">Analytics</span>
+      </a>
+
+      <a href="#" class="nav-item" data-page="categories">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+          </svg>
+        </span>
+        <span class="nav-label">Categories</span>
+      </a>
+
+      <div class="nav-divider"></div>
+
+      <a href="#" class="nav-item" data-page="profile">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+          </svg>
+        </span>
+        <span class="nav-label">Profile &amp; Settings</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <div class="user-avatar">{{ user[0] | upper if user else 'U' }}</div>
+        <div class="user-info">
+          <span class="user-name">{{ user }}</span>
+          <span class="user-role">Personal Account</span>
+        </div>
       </div>
     </div>
-  </div>
+  </aside>
 
-  <!-- Embed summary data as raw JSON -->
-  <script id="summary-data" type="application/json">
-    {{ summary | tojson }}
-  </script>
-</section>
+  <!-- Main Content -->
+  <main class="main-content">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="page-breadcrumb">
+          <span class="breadcrumb-section">Dashboard</span>
+          <span class="breadcrumb-sep">/</span>
+          <span class="breadcrumb-current" id="currentPageLabel">Overview</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn" title="Search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </button>
+        <button class="icon-btn notif-btn" title="Notifications">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          <span class="notif-dot"></span>
+        </button>
+        <div class="topbar-avatar">{{ user[0] | upper if user else 'U' }}</div>
+      </div>
+    </header>
+
+    <!-- Dashboard Body -->
+    <div class="dashboard-body">
+
+      <!-- Welcome Banner -->
+      <div class="welcome-banner">
+        <div class="welcome-text">
+          <p class="welcome-greeting">Good morning 👋</p>
+          <h1 class="welcome-name">{{ user }}</h1>
+        </div>
+        <div class="welcome-date" id="liveDateDisplay"></div>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="quick-actions">
+        <a href="{{url_for('addexpense.show_addexpense')}}">
+          <button class="qa-btn qa-primary" data-page="add-expense">
+          <span class="qa-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+            </svg>
+          </span>
+          <span class="qa-text">
+            <strong>Add Expense</strong>
+            <small>Log a new transaction</small>
+          </span>
+        </button>
+        </a>
+
+        <button class="qa-btn" data-page="view-expenses">
+          <span class="qa-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+          </span>
+          <span class="qa-text">
+            <strong>View Expenses</strong>
+            <small>Browse all records</small>
+          </span>
+        </button>
+
+        <button class="qa-btn" data-page="analytics">
+          <span class="qa-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/>
+              <line x1="6" y1="20" x2="6" y2="14"/>
+            </svg>
+          </span>
+          <span class="qa-text">
+            <strong>Analytics</strong>
+            <small>Insights &amp; trends</small>
+          </span>
+        </button>
+
+        <button class="qa-btn" data-page="categories">
+          <span class="qa-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+            </svg>
+          </span>
+          <span class="qa-text">
+            <strong>Categories</strong>
+            <small>Manage groups</small>
+          </span>
+        </button>
+
+        <button class="qa-btn" data-page="profile">
+          <span class="qa-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+            </svg>
+          </span>
+          <span class="qa-text">
+            <strong>Profile</strong>
+            <small>Settings &amp; account</small>
+          </span>
+        </button>
+      </div>
+
+      <!-- Stats Row -->
+      <div class="stats-grid">
+        <div class="stat-card stat-total">
+          <div class="stat-label">Total Spent</div>
+          <div class="stat-value" id="totalSpent">—</div>
+          <div class="stat-sub">All time</div>
+          <div class="stat-glyph">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+              <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="stat-card stat-month">
+          <div class="stat-label">This Month</div>
+          <div class="stat-value" id="monthlySpent">—</div>
+          <div class="stat-sub">Current period</div>
+          <div class="stat-glyph">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+              <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="stat-card stat-category">
+          <div class="stat-label">Top Category</div>
+          <div class="stat-value" id="topCategory">—</div>
+          <div class="stat-sub">Highest spending</div>
+          <div class="stat-glyph">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="stat-card stat-trend">
+          <div class="stat-label">Trend</div>
+          <div class="stat-value" id="trendValue">—</div>
+          <div class="stat-sub">vs last month</div>
+          <div class="stat-glyph">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+              <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
+              <polyline points="16 7 22 7 22 13"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chart + Recent side-by-side -->
+      <div class="bottom-grid">
+        <div class="card chart-card">
+          <div class="card-header">
+            <h3>Spending Breakdown</h3>
+            <div class="card-actions">
+              <button class="pill-btn active">Donut</button>
+              <button class="pill-btn">Bar</button>
+            </div>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="expenseChart"></canvas>
+          </div>
+        </div>
+
+        <div class="card recent-card">
+          <div class="card-header">
+            <h3>Recent Activity</h3>
+            <a href="#" class="see-all" data-page="view-expenses">See all →</a>
+          </div>
+          <div class="recent-list" id="recentList">
+            <div class="recent-empty">No recent transactions</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /dashboard-body -->
+  </main>
+</div>
+
+<!-- Overlay for mobile sidebar -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- Toast notification -->
+<div class="toast" id="navToast"></div>
+
+<!-- Embed summary data -->
+<script id="summary-data" type="application/json">{{ summary | tojson }}</script>
+
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 {% endblock %}

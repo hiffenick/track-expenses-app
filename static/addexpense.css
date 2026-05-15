@@ -1,0 +1,750 @@
+/* ============================================================
+   add_expense.css — Expenso · Add Expense Page
+   Place at: static/css/add_expense.css
+   Depends on: dashboard.css (CSS variables + base layout)
+   ============================================================ */
+
+/* ── Page Header ───────────────────────────────────────────── */
+.ae-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  animation: fadeSlideUp 0.45s ease both;
+}
+
+.ae-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: var(--transition);
+  white-space: nowrap;
+  margin-top: 6px;
+}
+
+.ae-back-btn:hover {
+  background: var(--surface-2);
+  border-color: var(--border-hover);
+  color: var(--text-primary);
+  transform: translateX(-2px);
+}
+
+/* ── Flash messages ────────────────────────────────────────── */
+.ae-flash-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+  animation: fadeSlideUp 0.4s ease both;
+}
+
+.ae-flash {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid transparent;
+}
+
+.ae-flash--success {
+  background: var(--teal-dim);
+  border-color: rgba(78,201,176,0.25);
+  color: var(--teal);
+}
+
+.ae-flash--error {
+  background: var(--rose-dim);
+  border-color: rgba(248,113,113,0.25);
+  color: var(--rose);
+}
+
+.ae-flash-icon {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.ae-flash--success .ae-flash-icon { background: rgba(78,201,176,0.2); }
+.ae-flash--error   .ae-flash-icon { background: rgba(248,113,113,0.2); }
+
+.ae-flash-close {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 18px;
+  cursor: pointer;
+  opacity: 0.6;
+  line-height: 1;
+  padding: 0 2px;
+  transition: opacity 0.15s;
+}
+.ae-flash-close:hover { opacity: 1; }
+
+/* ── Two-column layout ─────────────────────────────────────── */
+.ae-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 20px;
+  align-items: start;
+  animation: fadeSlideUp 0.45s 0.08s ease both;
+}
+
+/* ── Form Card ─────────────────────────────────────────────── */
+.ae-form-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.ae-form-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 24px 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.ae-form-card-header h2 {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--text-primary);
+  letter-spacing: -0.2px;
+}
+
+.ae-card-icon {
+  width: 34px; height: 34px;
+  background: var(--accent-dim);
+  border: 1px solid rgba(232,168,76,0.25);
+  border-radius: var(--radius-sm);
+  display: grid; place-items: center;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+/* ── Amount hero field ─────────────────────────────────────── */
+.ae-amount-field {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 28px 24px 24px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(232,168,76,0.04) 0%, transparent 100%);
+  position: relative;
+}
+
+.ae-currency-symbol {
+  font-family: var(--font-display);
+  font-size: 36px;
+  color: var(--accent);
+  line-height: 1;
+  padding-right: 6px;
+  padding-top: 4px;
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.ae-amount-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-display);
+  font-size: 48px;
+  color: var(--text-primary);
+  letter-spacing: -1px;
+  line-height: 1;
+  width: 100%;
+  caret-color: var(--accent);
+}
+
+.ae-amount-input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.5;
+}
+
+/* remove number arrows */
+.ae-amount-input::-webkit-outer-spin-button,
+.ae-amount-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+.ae-amount-input[type=number] { -moz-appearance: textfield; }
+
+/* ── Fields area ───────────────────────────────────────────── */
+.ae-fields {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* ── Single field ──────────────────────────────────────────── */
+.ae-field { display: flex; flex-direction: column; gap: 7px; }
+
+.ae-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+}
+
+.ae-required { color: var(--rose); margin-left: 2px; }
+.ae-optional { color: var(--text-muted); font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 11px; }
+
+/* ── Input wrapper ─────────────────────────────────────────── */
+.ae-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ae-input-icon {
+  position: absolute;
+  left: 13px;
+  color: var(--text-muted);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+}
+
+.ae-input-icon--top {
+  top: 13px;
+  align-items: flex-start;
+}
+
+.ae-input {
+  width: 100%;
+  padding: 11px 14px 11px 40px;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: var(--font-body);
+  transition: var(--transition);
+  outline: none;
+}
+
+.ae-input:hover { border-color: var(--border-hover); }
+
+.ae-input:focus {
+  border-color: rgba(232,168,76,0.5);
+  background: rgba(232,168,76,0.03);
+  box-shadow: 0 0 0 3px rgba(232,168,76,0.08);
+}
+
+.ae-input:focus + .ae-input-icon,
+.ae-input-wrap:focus-within .ae-input-icon { color: var(--accent); }
+
+.ae-input::placeholder { color: var(--text-muted); }
+
+/* date input calendar icon colour fix */
+.ae-input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.5) sepia(1) saturate(2) hue-rotate(10deg);
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+/* textarea */
+.ae-textarea-wrap { align-items: flex-start; }
+
+.ae-textarea {
+  resize: vertical;
+  min-height: 90px;
+  line-height: 1.6;
+  padding-top: 11px;
+}
+
+.ae-char-count {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: right;
+  margin-top: -2px;
+}
+
+/* ── Field errors ──────────────────────────────────────────── */
+.ae-field-error {
+  font-size: 12px;
+  color: var(--rose);
+  min-height: 16px;
+  display: block;
+  transition: opacity 0.2s;
+}
+
+/* ── Category grid ─────────────────────────────────────────── */
+.ae-cat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 8px;
+}
+
+.ae-cat-chip {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 12px;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: left;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.ae-cat-chip:hover {
+  background: var(--surface-2);
+  border-color: var(--border-hover);
+  color: var(--text-primary);
+}
+
+.ae-cat-chip.selected {
+  background: var(--accent-dim);
+  border-color: rgba(232,168,76,0.4);
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.ae-cat-emoji { font-size: 15px; flex-shrink: 0; }
+
+.ae-cat-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Form actions ──────────────────────────────────────────── */
+.ae-form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 0 24px 24px;
+}
+
+.ae-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 22px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 500;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: var(--transition);
+  border: none;
+  outline: none;
+  letter-spacing: 0.01em;
+}
+
+.ae-btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.ae-btn-ghost:hover {
+  background: var(--surface-2);
+  border-color: var(--border-hover);
+  color: var(--text-primary);
+}
+
+.ae-btn-primary {
+  background: var(--accent);
+  color: #0f1117;
+  font-weight: 600;
+  min-width: 140px;
+  justify-content: center;
+}
+
+.ae-btn-primary:hover {
+  background: #f0b55a;
+  box-shadow: 0 4px 16px rgba(232,168,76,0.3);
+  transform: translateY(-1px);
+}
+
+.ae-btn-primary:active { transform: translateY(0); }
+
+.ae-btn-primary:disabled {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.ae-btn-loader { display: none; align-items: center; gap: 6px; }
+.ae-btn.loading .ae-btn-text   { display: none; }
+.ae-btn.loading .ae-btn-loader { display: flex; }
+
+/* ── Spin animation ────────────────────────────────────────── */
+.ae-spin {
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ── Side Panel ────────────────────────────────────────────── */
+.ae-side {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: sticky;
+  top: calc(var(--topbar-h) + 20px);
+}
+
+/* ── Preview card ──────────────────────────────────────────── */
+.ae-preview-card {
+  overflow: visible;
+}
+
+.ae-preview-badge {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  border-radius: 99px;
+  background: var(--surface-2);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  transition: var(--transition);
+}
+
+.ae-preview-badge.ready {
+  background: var(--teal-dim);
+  border-color: rgba(78,201,176,0.25);
+  color: var(--teal);
+}
+
+.ae-preview-body {
+  padding: 20px 22px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ae-preview-amount {
+  font-family: var(--font-display);
+  font-size: 34px;
+  color: var(--accent);
+  letter-spacing: -1px;
+  line-height: 1.1;
+  transition: var(--transition);
+}
+
+.ae-preview-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: var(--transition);
+  min-height: 20px;
+}
+
+.ae-preview-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.ae-preview-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: var(--surface-2);
+  border-radius: 99px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  transition: var(--transition);
+}
+
+.ae-preview-chip.has-cat {
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+
+.ae-preview-date {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.ae-preview-note {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-style: italic;
+  line-height: 1.5;
+  min-height: 0;
+  transition: var(--transition);
+}
+
+/* ── Tips card ─────────────────────────────────────────────── */
+.ae-tips-list {
+  list-style: none;
+  padding: 16px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ae-tips-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.ae-tip-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+
+/* ── Input validation states ───────────────────────────────── */
+.ae-input.is-valid   { border-color: rgba(78,201,176,0.45); }
+.ae-input.is-invalid { border-color: rgba(248,113,113,0.5); background: rgba(248,113,113,0.03); }
+
+/* ── Responsive ────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .ae-layout { grid-template-columns: 1fr; }
+  .ae-side { position: static; }
+}
+
+@media (max-width: 600px) {
+  .ae-amount-input { font-size: 36px; }
+  .ae-amount-field { padding: 20px 16px 18px; }
+  .ae-fields       { padding: 18px 16px; }
+  .ae-form-actions { padding: 0 16px 18px; }
+  .ae-form-card-header { padding: 16px 16px 14px; }
+
+  .ae-cat-grid { grid-template-columns: repeat(2, 1fr); }
+
+  .ae-page-header { flex-direction: column; gap: 12px; align-items: flex-start; }
+  .ae-back-btn { margin-top: 0; }
+}
+
+/* ── Add Custom Category Chip ───────────────────────── */
+
+.ae-cat-chip-add {
+  border-style: dashed;
+  justify-content: center;
+  color: var(--accent);
+  background: rgba(232,168,76,0.05);
+}
+
+.ae-cat-chip-add:hover {
+  background: rgba(232,168,76,0.12);
+  border-color: rgba(232,168,76,0.4);
+}
+
+.ae-cat-plus {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* ── Custom Category Box ────────────────────────────── */
+
+.ae-custom-category {
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-3);
+
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+
+  animation: fadeSlideUp 0.25s ease;
+}
+
+.ae-custom-category.show {
+  display: flex;
+}
+
+/* ── Category Modal ───────────────────────── */
+
+.ae-modal-overlay {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(6px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 9999;
+
+  opacity: 0;
+  visibility: hidden;
+
+  transition: 0.25s ease;
+}
+
+.ae-modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.ae-modal {
+  width: 100%;
+  max-width: 430px;
+
+  background: var(--surface);
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+
+  overflow: hidden;
+
+  box-shadow: 0 25px 80px rgba(0,0,0,0.45);
+
+  transform: translateY(12px) scale(0.97);
+  transition: 0.25s ease;
+}
+
+.ae-modal-overlay.active .ae-modal {
+  transform: translateY(0) scale(1);
+}
+
+.ae-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 20px 22px;
+
+  border-bottom: 1px solid var(--border);
+}
+
+.ae-modal-header h2 {
+  font-size: 20px;
+  font-family: var(--font-display);
+  color: var(--text-primary);
+}
+
+.ae-modal-close {
+  background: transparent;
+  border: none;
+
+  color: var(--text-muted);
+
+  font-size: 26px;
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.ae-modal-close:hover {
+  color: var(--rose);
+}
+
+.ae-modal-body {
+  padding: 22px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.ae-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+
+  padding: 0 22px 22px;
+}
+
+/* DELETE /REMOVE THE CATEOGORY */
+/* ── Category Chip Delete Hover ───────────────── */
+
+.ae-cat-chip {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    overflow: visible;
+
+    transition: 
+        transform 0.18s ease,
+        border-color 0.18s ease,
+        background 0.18s ease;
+}
+
+.ae-cat-chip:hover {
+    transform: scale(1.05);
+}
+
+/* delete button */
+.ae-cat-delete {
+
+    margin-left: auto;
+
+    width: 18px;
+    height: 18px;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--rose);
+
+    color: white;
+
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+
+    flex-shrink: 0;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transform: scale(0.6);
+
+    transition: 
+        opacity 0.18s ease,
+        transform 0.18s ease,
+        visibility 0.18s ease;
+}
+
+/* show only on hover */
+.ae-cat-chip:hover .ae-cat-delete {
+
+    opacity: 1;
+    visibility: visible;
+
+    transform: scale(1);
+}

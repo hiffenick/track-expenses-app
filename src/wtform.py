@@ -1,6 +1,8 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField,SubmitField,EmailField,PasswordField,TelField,IntegerField,DateField,SelectField
 from wtforms.validators import Email,DataRequired,Regexp,Length
+from wtforms import StringField, FloatField, DateField, TextAreaField
+from wtforms.validators import DataRequired, NumberRange
 
 class Signup(FlaskForm):
     email = EmailField('email',validators=[DataRequired(),Email()])
@@ -29,3 +31,11 @@ class AddExpense(FlaskForm):
     ],validators=[DataRequired()])
     date = DateField('date', format='%Y-%m-%d',validators=[DataRequired()])
     note = StringField('note',validators=[DataRequired(),Length(max=400)])
+
+
+class ExpenseForm(FlaskForm):
+    title = StringField(validators=[DataRequired()])
+    amount = FloatField(validators=[DataRequired(), NumberRange(min=0.01)])
+    category = StringField(validators=[DataRequired()])
+    date = DateField(validators=[DataRequired()])
+    note = TextAreaField()
