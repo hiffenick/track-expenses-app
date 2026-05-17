@@ -1,0 +1,584 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='editmodal.css') }}">
+<div class="dashboard-root">
+
+  <!-- ── Sidebar ──────────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <span class="brand-name">Expenso</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="{{ url_for('dashboard.dashboard') }}"     class="nav-item" data-page="dashboard">
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>
+        <span class="nav-label">Dashboard</span>
+      </a>
+      <a href="{{ url_for('addexpense.addexpense') }}"   class="nav-item" data-page="add-expense">
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></span>
+        <span class="nav-label">Add Expense</span>
+      </a>
+      <a href="{{ url_for('viewexp.viewexps')}}" class="nav-item active" data-page="view-expenses">
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
+        <span class="nav-label">View Expenses</span>
+      </a>
+      <a href=""    class="nav-item" data-page="analytics">
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg></span>
+        <span class="nav-label">Analytics</span>
+      </a>
+      <a href=""   class="nav-item" data-page="categories">
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></span>
+        <span class="nav-label">Categories</span>
+      </a>
+      <div class="nav-divider"></div>
+      <a href=""      class="nav-item" data-page="profile">
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>
+        <span class="nav-label">Profile &amp; Settings</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <div class="user-avatar">{{ user[0]|upper if user else 'U' }}</div>
+        <div class="user-info">
+          <span class="user-name">{{ user }}</span>
+          <span class="user-role">Personal Account</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Main ─────────────────────────────────────────────────── -->
+  <main class="main-content">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="page-breadcrumb">
+          <span class="breadcrumb-section">Dashboard</span>
+          <span class="breadcrumb-sep">/</span>
+          <span class="breadcrumb-current">View Expenses</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn" title="Search" id="topbarSearchBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+        <button class="icon-btn notif-btn" title="Notifications">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="notif-dot"></span>
+        </button>
+        <div class="topbar-avatar">{{ user[0]|upper if user else 'U' }}</div>
+      </div>
+    </header>
+
+    <div class="dashboard-body ve-body">
+
+      <!-- ══ HERO HEADER ════════════════════════════════════════ -->
+      <div class="ve-hero">
+        <div class="ve-hero-left">
+          <p class="ve-hero-sub">Overview · <span id="heroYear">2026</span></p>
+          <h1 class="ve-hero-title">All Expenses</h1>
+          <p class="ve-hero-tagline">Track every rupee you spend.</p>
+        </div>
+        <div class="ve-hero-stats">
+          <div class="ve-hero-stat">
+            <span class="ve-hs-label">Spent this month</span>
+            <span class="ve-hs-value" id="heroMonthTotal">₹0</span>
+          </div>
+          <div class="ve-hero-divider"></div>
+          <div class="ve-hero-stat">
+            <span class="ve-hs-label">Transactions</span>
+            <span class="ve-hs-value" id="heroTxCount">0</span>
+          </div>
+          <div class="ve-hero-divider"></div>
+          <div class="ve-hero-stat">
+            <span class="ve-hs-label">vs last month</span>
+            <span class="ve-hs-value ve-hs-trend" id="heroTrend">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ FILTER BAR ══════════════════════════════════════════ -->
+      <div class="ve-filter-bar glass-card">
+        <!-- Month pills -->
+        <div class="ve-filter-row">
+          <div class="ve-filter-section">
+            <span class="ve-filter-label">Month</span>
+            <div class="ve-month-pills-wrap">
+              <div class="ve-month-pills" id="monthPills">
+                <button class="ve-month-pill" data-month="1">Jan</button>
+                <button class="ve-month-pill" data-month="2">Feb</button>
+                <button class="ve-month-pill" data-month="3">Mar</button>
+                <button class="ve-month-pill" data-month="4">Apr</button>
+                <button class="ve-month-pill" data-month="5">May</button>
+                <button class="ve-month-pill" data-month="6">Jun</button>
+                <button class="ve-month-pill" data-month="7">Jul</button>
+                <button class="ve-month-pill" data-month="8">Aug</button>
+                <button class="ve-month-pill" data-month="9">Sep</button>
+                <button class="ve-month-pill" data-month="10">Oct</button>
+                <button class="ve-month-pill" data-month="11">Nov</button>
+                <button class="ve-month-pill" data-month="12">Dec</button>
+                <button class="ve-month-pill ve-month-pill--all active" data-month="all">All</button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- ══ SPENDING CHART  ════════════════════════════════════ -->
+          <!-- Paste this block BELOW .ve-month-cards div and ABOVE .ve-empty + .ve-pagination -->
+
+          <div class="ve-filter-controls">
+            <!-- Year dropdown -->
+            <div class="ve-select-wrap">
+              <select class="ve-select" id="yearSelect">
+                <option value="2026">2026</option>
+                <option value="2025">2025</option>
+                <option value="2024">2024</option>
+              </select>
+              <svg class="ve-select-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+
+            <!-- Sort dropdown -->
+            <div class="ve-select-wrap">
+              <select class="ve-select" id="sortSelect">
+                <option value="date-desc">Latest First</option>
+                <option value="date-asc">Oldest First</option>
+                <option value="amount-desc">Highest Amount</option>
+                <option value="amount-asc">Lowest Amount</option>
+              </select>
+              <svg class="ve-select-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+          </div>
+        </div>
+          <div class="ve-chart-section" id="chartSection">
+
+            <!-- Header -->
+            <div class="ve-chart-header">
+              <div class="ve-chart-title-group">
+                <span class="ve-chart-eyebrow" id="chartEyebrow">Daily Spending</span>
+                <h2 class="ve-chart-title" id="chartTitle">May 2026</h2>
+              </div>
+              <div class="ve-chart-meta">
+                <div class="ve-chart-stat-pill">
+                  <span class="ve-csp-label">Total</span>
+                  <span class="ve-csp-value" id="chartTotalLabel">₹0</span>
+                </div>
+                <div class="ve-chart-stat-pill">
+                  <span class="ve-csp-label">Transactions</span>
+                  <span class="ve-csp-value" id="chartTxLabel">0</span>
+                </div>
+                <div class="ve-chart-toggle" id="chartToggle">
+                  <button class="ve-ct-btn active" data-mode="daily">Daily</button>
+                  <button class="ve-ct-btn" data-mode="cumulative">Cumulative</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Canvas -->
+            <div class="ve-chart-wrap glass-card">
+              <div class="ve-chart-loading" id="chartLoading" style="display:none;">
+                <div class="ve-chart-spinner"></div>
+                <span>Loading chart…</span>
+              </div>
+              <div class="ve-chart-canvas-wrap" style="height:240px;position:relative;">
+                <canvas id="spendingChart" style="display:block;width:100%;height:240px;"></canvas>
+              </div>
+              <div class="ve-chart-tooltip" id="chartTooltip" hidden>
+                <div class="ve-ct-date"   id="ctDate"></div>
+                <div class="ve-ct-amount" id="ctAmount"></div>
+              </div>
+            </div>
+
+            <!-- Category strip -->
+            <div class="ve-chart-cats" id="chartCats"></div>
+
+          </div>
+          <!-- ══ END SPENDING CHART ════════════════════════════════ -->
+
+          
+        <!-- Category chips -->
+        <div class="ve-filter-row ve-filter-row--cats">
+          <span class="ve-filter-label">Category</span>
+          <div class="ve-cat-chips" id="catChips">
+            <button class="ve-cat-chip active" data-cat="all">All</button>
+            {% for cat in categories %}
+            <button class="ve-cat-chip" data-cat="{{ cat.name|lower }}">
+              {{ cat.icon }} {{ cat.name }}
+            </button>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Search -->
+        <div class="ve-search-wrap">
+          <svg class="ve-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input
+            type="text"
+            id="searchInput"
+            class="ve-search-input"
+            placeholder="Search title, note or category…"
+            autocomplete="off">
+          <button class="ve-search-clear" id="searchClear" hidden>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- ══ CONTENT GRID (cards + sidebar) ═════════════════════ -->
+      <div class="ve-content-grid">
+
+        <!-- Left: monthly cards + expanded lists -->
+        <div class="ve-main-col">
+
+          <!-- Active filters pill row -->
+          <div class="ve-active-filters" id="activeFilters" hidden>
+            <span class="ve-af-label">Filtered:</span>
+            <div class="ve-af-tags" id="afTags"></div>
+            <button class="ve-af-clear" id="clearAllFilters">Clear all</button>
+          </div>
+
+          <!-- ═══════════════════════════════════════════════════════════════════
+     EXPENSE CARDS  — replaces the raw .ve-month-cards block
+     
+     APPROACH: Server-Side Rendering (SSR) with Jinja on initial load,
+     AJAX only for filter/sort/search updates. This is the industrial
+     standard used by apps like Linear, Notion, Vercel dashboard:
+     
+       • First paint = full SSR (fast, SEO-friendly, no flash)
+       • Filter/sort interactions = AJAX fetch → swap innerHTML
+       • No full page reload, no React overhead, works with Flask perfectly
+     
+     The Flask route already passes `expenses` to the template, so the
+     initial render is instant. JS only kicks in when the user interacts.
+═══════════════════════════════════════════════════════════════════ -->
+
+          <div class="ve-month-cards" id="monthCards">
+
+            <!-- ── List header ─────────────────────────────────────────── -->
+            <div class="ec-list-header">
+              <span class="ec-lh-count" id="ecCount">
+                {{ expenses|length }} transaction{{ 's' if expenses|length != 1 else '' }}
+              </span>
+              <div class="ec-lh-cols">
+                <span>Category</span>
+                <span>Title</span>
+                <span>Date</span>
+                <span>Amount</span>
+                <span>Actions</span>
+              </div>
+            </div>
+
+            <!-- ── Expense rows ────────────────────────────────────────── -->
+            <div class="ec-list" id="ecList">
+              {% for exp in expenses %}
+              <div class="ec-row" 
+                  data-id="{{ exp.id }}"
+                  data-cat="{{ exp.category_id }}"
+                  data-cat-name="{{ exp.category|lower }}"
+                  data-date="{{ exp.date }}"
+                  data-amount="{{ exp.amount }}">
+
+                <!-- Category badge -->
+                <div class="ec-badge">
+                  <span class="ec-badge-icon">{{ exp.icon }}</span>
+                  <span class="ec-badge-name">{{ exp.category }}</span>
+                </div>
+
+                <!-- Title + note -->
+                <div class="ec-info">
+                  <span class="ec-title">{{ exp.title }}</span>
+                  {% if exp.note %}
+                    <span class="ec-note">{{ exp.note }}</span>
+                  {% endif %}
+                </div>
+
+                <!-- Date -->
+                <div class="ec-date">
+                  <span class="ec-date-day">{{ exp.date[8:10] }}</span>
+                  <span class="ec-date-month">{{ exp.date }}</span>
+                </div>
+
+                <!-- Amount -->
+                <div class="ec-amount">₹{{ '{:,.0f}'.format(exp.amount) }}</div>
+
+                <!-- Actions (shown on hover) -->
+                <div class="ec-actions">
+                  <button class="ec-btn ec-btn--edit"
+                          onclick="ecHandleEdit({{ exp.id }})"
+                          title="Edit">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                  </button>
+                  <button class="ec-btn ec-btn--delete"
+                          onclick="ecHandleDelete({{ exp.id }})"
+                          title="Delete">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6"/>
+                      <path d="M19 6l-1 14H6L5 6"/>
+                      <path d="M10 11v6M14 11v6"/>
+                      <path d="M9 6V4h6v2"/>
+                    </svg>
+                  </button>
+                </div>
+
+              </div>
+              {% else %}
+              <!-- Empty state (no expenses at all) -->
+              <div class="ec-empty">
+                <div class="ec-empty-icon">💸</div>
+                <p class="ec-empty-title">No expenses yet</p>
+                <p class="ec-empty-sub">Start tracking your spending.</p>
+                <a href="{{ url_for('addexpense.addexpense') }}" class="ec-empty-btn">
+                  + Add first expense
+                </a>
+              </div>
+              {% endfor %}
+            </div>
+
+            <!-- ── No results state (shown by JS when filters produce 0 rows) -->
+            <div class="ec-no-results" id="ecNoResults" hidden>
+              <div class="ec-empty-icon">🔍</div>
+              <p class="ec-empty-title">No results</p>
+              <p class="ec-empty-sub">Try adjusting your filters or search.</p>
+            </div>
+
+          </div>
+
+          <!-- Empty state -->
+          <div class="ve-empty" id="emptyState" hidden>
+            <div class="ve-empty-icon">💸</div>
+            <h3 class="ve-empty-title">No expenses found</h3>
+            <p class="ve-empty-sub">Time to spend responsibly 😭<br>or adjust your filters.</p>
+            <a href="{{ url_for('addexpense.addexpense') }}" class="ve-empty-btn">+ Add your first expense</a>
+          </div>
+
+          <!-- Pagination -->
+          <div class="ve-pagination" id="pagination" hidden>
+            <button class="ve-pg-btn" id="pgPrev" disabled>← Previous</button>
+            <div class="ve-pg-pages" id="pgPages"></div>
+            <button class="ve-pg-btn" id="pgNext">Next →</button>
+          </div>
+
+        </div><!-- /ve-main-col -->
+
+        <!-- Right: sticky sidebar summary -->
+        <aside class="ve-sidebar-panel" id="summaryPanel">
+          <div class="ve-sp-card card">
+            <div class="card-header">
+              <h3>This Month</h3>
+              <span class="ve-sp-month-label" id="spMonthLabel">May 2026</span>
+            </div>
+            <div class="ve-sp-body">
+              <!-- Category breakdown -->
+              <div class="ve-sp-breakdown" id="spBreakdown">
+                <div class="ve-sp-empty">No data yet</div>
+              </div>
+              <div class="ve-sp-total-row">
+                <span>Total</span>
+                <strong id="spTotal">₹0</strong>
+              </div>
+              <!-- Mini donut -->
+              <div class="ve-sp-donut-wrap">
+                <canvas id="miniDonut" width="180" height="180"></canvas>
+              </div>
+              <!-- Insight -->
+              <div class="ve-sp-insight" id="spInsight">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span id="spInsightText">Add some expenses to see insights.</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+      </div><!-- /ve-content-grid -->
+
+    </div><!-- /dashboard-body -->
+  </main>
+</div>
+
+<!-- Sidebar overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- Delete confirmation modal -->
+<div class="ve-modal-backdrop" id="deleteModal" hidden>
+  <div class="ve-modal">
+    <div class="ve-modal-icon">🗑️</div>
+    <h3 class="ve-modal-title">Delete expense?</h3>
+    <p class="ve-modal-sub">This action cannot be undone.</p>
+    <div class="ve-modal-actions">
+      <button class="ve-modal-btn ve-modal-btn--ghost" id="modalCancel">Cancel</button>
+      <button class="ve-modal-btn ve-modal-btn--danger" id="modalConfirm">Delete</button>
+    </div>
+  </div>
+</div>
+
+{# ─────────────────────────────────────────────────────────────────────────
+   EDIT EXPENSE MODAL
+   Paste this block anywhere inside viewexpense.html, right after the
+   existing delete modal block:
+
+  <!-- Delete confirmation modal -->
+ <div class="ve-modal-backdrop" id="deleteModal" hidden> ... </div>
+
+   Paste this immediately below that closing </div>
+───────────────────────────────────────────────────────────────────────── #}
+
+<!-- ── Edit Expense Modal ─────────────────────────────────────────────── -->
+<div class="ve-modal-backdrop em-backdrop" id="editModal" hidden>
+  <div class="ve-modal em-modal">
+
+    <!-- Header -->
+    <div class="em-header">
+      <div class="em-header-left">
+        <div class="em-header-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+        </div>
+        <div>
+          <h3 class="em-title">Edit Expense</h3>
+          <p class="em-subtitle">Update the details below</p>
+        </div>
+      </div>
+      <button class="em-close" id="editModalClose" aria-label="Close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Amount hero -->
+    <div class="em-amount-row">
+      <span class="em-currency">₹</span>
+      <input
+        type="number"
+        id="emAmount"
+        class="em-amount-input"
+        placeholder="0.00"
+        min="0.01"
+        step="0.01"
+        inputmode="decimal"
+        autocomplete="off">
+    </div>
+
+    <!-- Form fields -->
+    <div class="em-fields">
+
+      <!-- Title -->
+      <div class="em-field">
+        <label class="em-label" for="emTitle">Title <span class="em-req">*</span></label>
+        <div class="em-input-wrap">
+          <svg class="em-input-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+          <input type="text" id="emTitle" class="em-input" placeholder="e.g. Lunch at Café" maxlength="120" autocomplete="off">
+        </div>
+        <span class="em-error" id="emTitleError"></span>
+      </div>
+
+      <!-- Category -->
+      <div class="em-field">
+        <label class="em-label">Category <span class="em-req">*</span></label>
+        <div class="em-cat-grid" id="emCatGrid">
+          {# populated by JS from categories-data JSON #}
+        </div>
+        <input type="hidden" id="emCategory">
+        <span class="em-error" id="emCategoryError"></span>
+      </div>
+
+      <!-- Date + Note side by side on desktop -->
+      <div class="em-row-2">
+        <div class="em-field">
+          <label class="em-label" for="emDate">Date <span class="em-req">*</span></label>
+          <div class="em-input-wrap">
+            <svg class="em-input-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            <input type="date" id="emDate" class="em-input">
+          </div>
+          <span class="em-error" id="emDateError"></span>
+        </div>
+
+        <div class="em-field">
+          <label class="em-label" for="emNote">
+            Note <span class="em-optional">(optional)</span>
+          </label>
+          <div class="em-input-wrap">
+            <svg class="em-input-icon em-input-icon--top" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            <textarea id="emNote" class="em-input em-textarea" rows="2" maxlength="400" placeholder="Any notes…"></textarea>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /em-fields -->
+
+    <!-- Error banner (server errors) -->
+    <div class="em-error-banner" id="emErrorBanner" hidden>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <span id="emErrorText">Something went wrong.</span>
+    </div>
+
+    <!-- Actions -->
+    <div class="em-actions">
+      <button class="em-btn em-btn--ghost" id="editModalCancel">Cancel</button>
+      <button class="em-btn em-btn--primary" id="editModalSave">
+        <span class="em-btn-text">Save changes</span>
+        <span class="em-btn-loader" hidden>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="em-spin">
+            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+          </svg>
+          Saving…
+        </span>
+      </button>
+    </div>
+
+    <!-- Hidden field for expense id -->
+    <input type="hidden" id="emExpenseId">
+
+  </div>
+</div>
+{# ── end edit modal ── #}
+<!-- Toast -->
+<div class="toast" id="navToast"></div>
+
+<!-- Floating FAB (mobile) -->
+<a href="{{ url_for('addexpense.addexpense') }}" class="ve-fab" title="Add Expense">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+</a>
+
+<!-- Data from Flask -->
+ <script id="expenses-data" type="application/json">
+  {{ expenses|tojson }}
+</script>
+
+<script id="categories-data" type="application/json">
+  {{ categories_json|tojson }}
+</script>
+
+<script id="page-meta" type="application/json">
+  {{ {'currentYear': 2026}|tojson }}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='viewexpense.js') }}"></script>
+<script src="{{ url_for('static', filename='editmodal.js') }}"></script>
+{% endblock %}

@@ -18,6 +18,7 @@ from src.logout import logout_route
 from flask_login import login_manager
 from src.signup import signup_route
 from src.started import started_route
+from src.viewexpense import view_expenses_route
 from src.greeting import greeting_route
 from src.extensions import mail
 from src.extensions import loginmanager
@@ -49,4 +50,6 @@ def createapp():
     app.register_blueprint(verify_route)
     app.register_blueprint(greeting_route)
     app.register_blueprint(addexpense_route)
+    app.register_blueprint(view_expenses_route)
+    
     return app  

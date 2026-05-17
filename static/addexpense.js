@@ -5,25 +5,17 @@
  */
 
 /* ── DOM refs ─────────────────────────────────────────────── */
-const form        = document.getElementById('addExpenseForm');
-const amountInput = document.getElementById('amount');
-const titleInput  = document.getElementById('title');
-const categoryInput = document.getElementById('category');
-const dateInput   = document.getElementById('date');
-const noteInput   = document.getElementById('note');
-const noteCount   = document.getElementById('noteCount');
-const submitBtn   = document.getElementById('submitBtn');
-const clearBtn    = document.getElementById('clearBtn');
+let form, amountInput, titleInput, categoryInput,dateInput, noteInput, noteCount, submitBtn, clearBtn;
 
 // preview
-const previewAmount   = document.getElementById('previewAmount');
-const previewTitle    = document.getElementById('previewTitle');
-const previewCat      = document.getElementById('previewCat');
-const previewCatEmoji = document.getElementById('previewCatEmoji');
-const previewCatLabel = document.getElementById('previewCatLabel');
-const previewDate     = document.getElementById('previewDate');
-const previewNote     = document.getElementById('previewNote');
-const previewBadge    = document.getElementById('previewBadge');
+let previewAmount,
+    previewTitle,
+    previewCat,
+    previewCatEmoji,
+    previewCatLabel,
+    previewDate,
+    previewNote,
+    previewBadge;
 
 /* ── Helpers ──────────────────────────────────────────────── */
 const fmt = v => {
@@ -62,38 +54,21 @@ function clearFieldError(inputId, errorId) {
 /* ── Category chips ───────────────────────────────────────── */
 let selectedCatData = null;
 
-document.querySelectorAll('.ae-cat-chip').forEach(chip => {
-  chip.addEventListener('click', () => {
-    // deselect all
-    document.querySelectorAll('.ae-cat-chip').forEach(c => c.classList.remove('selected'));
-    // select this
-    chip.classList.add('selected');
-    const val   = chip.dataset.value;
-    const label = chip.dataset.label;
-    const emoji = chip.querySelector('.ae-cat-emoji')?.textContent || '💸';
-    categoryInput.value = val;
-    selectedCatData = { val, label, emoji };
-    clearFieldError('category', 'categoryError');
-    updatePreview();
-  });
-});
-
 /* ── Live preview update ──────────────────────────────────── */
 function updatePreview() {
+  if (!previewAmount) return;   // ← bail if DOM not ready yet
+
   const amount = amountInput?.value;
   const title  = titleInput?.value?.trim();
   const date   = dateInput?.value;
   const note   = noteInput?.value?.trim();
-  const filled = amount && parseFloat(amount) > 0 && title && categoryInput.value && date;
+  const filled = amount && parseFloat(amount) > 0 && title && categoryInput?.value && date;
 
-  // Amount
   previewAmount.textContent = fmt(amount);
 
-  // Title
   previewTitle.textContent = title || 'Transaction title';
   previewTitle.style.color = title ? 'var(--text-primary)' : 'var(--text-muted)';
 
-  // Category
   if (selectedCatData) {
     previewCatEmoji.textContent = selectedCatData.emoji;
     previewCatLabel.textContent = selectedCatData.label;
@@ -104,13 +79,9 @@ function updatePreview() {
     previewCat.classList.remove('has-cat');
   }
 
-  // Date
   previewDate.textContent = fmtDate(date);
-
-  // Note
   previewNote.textContent = note || '';
 
-  // Badge
   if (filled) {
     previewBadge.textContent = 'Ready';
     previewBadge.classList.add('ready');
@@ -175,53 +146,6 @@ function validateForm() {
 }
 
 /* ── Form submission (AJAX) ───────────────────────────────── */
-form?.addEventListener('submit', async e => {
-  e.preventDefault();
-
-  if (!validateForm()) return;
-
-  // Loading state
-  submitBtn.classList.add('loading');
-  submitBtn.disabled = true;
-
-  try {
-
-    // Remove the hidden csrf_token from FormData to avoid conflicts
-    // We send it only via header
-
-    const formData = new FormData(form);
-
-
-      const response = await fetch(form.action, {
-          method: 'POST',
-          body: formData,
-          credentials: "same-origin"
-      });
-
-    const data = await response.json();
-
-    if (data.success) {
-      showToast('✓ ' + (data.message || 'Expense added!'), 2600);
-      resetForm();
-      // Navigate after short delay
-      if (data.redirect) {
-        setTimeout(() => { window.location.href = data.redirect; }, 1200);
-      }
-    } else {
-      // Server-side errors
-      const errors = data.errors || ['Something went wrong.'];
-      errors.forEach(err => showToast(err, 3000));
-    }
-
-  } catch (err) {
-    // Fallback: submit normally if fetch fails
-    console.warn('AJAX submit failed, falling back to form POST:', err);
-    form.submit();
-  } finally {
-    submitBtn.classList.remove('loading');
-    submitBtn.disabled = false;
-  }
-});
 
 /* ── Clear / reset ────────────────────────────────────────── */
 function resetForm() {
@@ -250,7 +174,60 @@ clearBtn?.addEventListener('click', () => {
 });
 
 /* ── Bind live update events ──────────────────────────────── */
-amountInput?.addEventListener('input', updatePreview);
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const modal = document.getElementById("categoryModal");
+  const openBtn = document.getElementById("openCustomCategory");
+  const closeBtn = document.getElementById("closeCategoryModal");
+  const cancelBtn = document.getElementById("cancelCategoryModal");
+
+  if (openBtn) {
+    openBtn.addEventListener("click", () => {
+      modal?.classList.add("active");
+    });
+  }
+
+  if (closeBtn) {
+    closeBtn.addEventListener("click", () => {
+      modal?.classList.remove("active");
+    });
+  }
+
+  if (cancelBtn) {
+    cancelBtn.addEventListener("click", () => {
+      modal?.classList.remove("active");
+    });
+  }
+
+  if (modal) {
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        modal.classList.remove("active");
+      }
+    });
+  }
+  form          = document.getElementById('addExpenseForm');
+  amountInput   = document.getElementById('amount');
+  titleInput    = document.getElementById('title');
+  categoryInput = document.getElementById('category');
+  dateInput     = document.getElementById('date');
+  noteInput     = document.getElementById('note');
+  noteCount     = document.getElementById('noteCount');
+  submitBtn     = document.getElementById('submitBtn');
+  clearBtn      = document.getElementById('clearBtn');
+
+
+  previewAmount   = document.getElementById('previewAmount');
+  previewTitle    = document.getElementById('previewTitle');
+  previewCat      = document.getElementById('previewCat');
+  previewCatEmoji = document.getElementById('previewCatEmoji');
+  previewCatLabel = document.getElementById('previewCatLabel');
+  previewDate     = document.getElementById('previewDate');
+  previewNote     = document.getElementById('previewNote');
+  previewBadge    = document.getElementById('previewBadge');
+
+  amountInput?.addEventListener('input', updatePreview);
 titleInput?.addEventListener('input', () => {
   clearFieldError('title', 'titleError');
   updatePreview();
@@ -294,45 +271,92 @@ document.addEventListener('keydown', e => {
   }
 });
 
-/* ── Init ─────────────────────────────────────────────────── */
-document.addEventListener('DOMContentLoaded', () => {
-  updatePreview();
-  updateCharCount();
-  // Auto-focus amount
-  amountInput?.focus();
+
+  document.querySelectorAll('.ae-cat-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    // deselect all
+    document.querySelectorAll('.ae-cat-chip').forEach(c => c.classList.remove('selected'));
+    // select this
+    chip.classList.add('selected');
+    const val   = chip.dataset.value;
+    const label = chip.dataset.label;
+    const emoji = chip.querySelector('.ae-cat-emoji')?.textContent || '💸';
+    categoryInput.value = val;
+    selectedCatData = { val, label, emoji };
+    clearFieldError('category', 'categoryError');
+    updatePreview();
+  });
 });
 
-const modal = document.getElementById("categoryModal");
+  form?.addEventListener('submit', async e => {
+  e.preventDefault();
+  e.stopPropagation(); 
 
-const openBtn = document.getElementById("openCustomCategory");
+  if (!validateForm()) return;
 
-const closeBtn = document.getElementById("closeCategoryModal");
+  // Loading state
+  submitBtn.classList.add('loading');
+  submitBtn.disabled = true;
 
-const cancelBtn = document.getElementById("cancelCategoryModal");
+  try {
 
-openBtn.addEventListener("click", () => {
-    modal.classList.add("active");
-});
+    // Remove the hidden csrf_token from FormData to avoid conflicts
+    // We send it only via header
 
-closeBtn.addEventListener("click", () => {
-    modal.classList.remove("active");
-});
+    const formData = new FormData(form);
 
-cancelBtn.addEventListener("click", () => {
-    modal.classList.remove("active");
-});
 
-modal.addEventListener("click", (e) => {
+      const response = await fetch(form.action, {
+          method: 'POST',
+          body: formData,
+          credentials: "same-origin"
+      });
 
-    if (e.target === modal) {
-        modal.classList.remove("active");
+    const text = await response.text();
+    let data;
+
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      console.error("Invalid JSON response:", text);
+      showToast("Server returned invalid response");
+      return;
+    }
+    if (data.success) {
+      showToast('✓ ' + (data.message || 'Expense added!'), 2600);
+      resetForm();
+      // Navigate after short delay
+      if (data.redirect) {
+        setTimeout(() => { window.location.href = data.redirect; }, 1200);
+      }
+    } else {
+      // Server-side errors
+      const errors = data.errors || ['Something went wrong.'];
+      errors.forEach(err => showToast(err, 3000));
     }
 
+  } catch (err) {
+      console.error('Submit failed:', err);
+      showToast("Request failed. Try again.");
+  }finally {
+    submitBtn.classList.remove('loading');
+    submitBtn.disabled = false;
+  }
+});
+
+
+
+  updatePreview();
+  updateCharCount();
+  amountInput?.focus();
+  
 });
 
 // POPUP 
 
+document.addEventListener("DOMContentLoaded", () => {
 const saveCategoryBtn = document.getElementById("saveCategoryBtn");
+if (!saveCategoryBtn) return;
 
 saveCategoryBtn.addEventListener("click", async () => {
 
@@ -379,7 +403,7 @@ saveCategoryBtn.addEventListener("click", async () => {
 
         addCategoryChip(data.category);
 
-        modal.classList.remove("active");
+        document.getElementById("categoryModal")?.classList.remove("active");
 
         document.getElementById("customCategoryName").value = "";
         document.getElementById("customCategoryEmoji").value = "";
@@ -395,8 +419,8 @@ saveCategoryBtn.addEventListener("click", async () => {
         console.error(error);
 
     }
-
-});
+  });  // ← closes saveCategoryBtn click
+}); 
 
 function addCategoryChip(category) {
 

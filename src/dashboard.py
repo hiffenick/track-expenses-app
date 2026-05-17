@@ -55,8 +55,39 @@ def dashboard():
         }
     }
 
+    all_expenses = expenses.query.filter_by(
+    user_id=current_user.user_id
+    ).all()
+
+    # Get categories
+    all_categories = Category.query.all()
+
+    # Convert expenses into JSON-safe dicts
+    expense_data = []
+
+    for exp in all_expenses:
+        expense_data.append({
+            "expense_id": exp.expense_id,
+            "title": exp.expense_title,
+            "amount": float(exp.expense_amount),
+            "date": exp.expense_date.strftime("%Y-%m-%d"),
+            "category": exp.category.name if exp.category else "Other"
+        })
+
+    # Convert categories into JSON-safe dicts
+    category_data = []
+
+    for cat in all_categories:
+        category_data.append({
+            "id": cat.category_id,
+            "name": cat.name
+        })
+
     return render_template(
         'dashboard.html',
         user=current_user.user_name,
-        summary=summary
+        summary=summary,
+        expenses=expense_data,
+        categories=category_data,
+        now=now
     )

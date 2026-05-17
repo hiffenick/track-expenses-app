@@ -174,7 +174,7 @@ def addexpense():
         return jsonify({
             "success": True,
             "message": "Expense added successfully!",
-            "redirect": url_for("dashboard.dashboard")
+            "redirect": url_for("addexpense.addexpense")
         })
 
     except Exception as e:

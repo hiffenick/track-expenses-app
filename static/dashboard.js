@@ -132,7 +132,7 @@ function loadSummaryData() {
 }
 
 /* ── Chart rendering ──────────────────────────────────────── */
-function renderChart(data) {
+function renderDashboardChart(data) {
   const ctx = document.getElementById('expenseChart');
   if (!ctx) return;
 
@@ -275,7 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateDate();
   setGreeting();
   const data = loadSummaryData();
-  renderChart(data);
+  renderDashboardChart(data);
   populateRecentList(data);
   bindPillBtns();
 });

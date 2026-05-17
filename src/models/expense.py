@@ -18,3 +18,4 @@ class expenses(db.Model):
     category_id = db.Column(db.Integer, db.ForeignKey('categories.category_id'), nullable=False)
     category = db.relationship('Category', back_populates='expenses')
     
+    
