@@ -570,11 +570,43 @@ function initStreak() {
    HTML class: an-period-btn
 ════════════════════════════════ */
 function initPeriodSelector() {
-  document.querySelectorAll('.an-period-btn').forEach(btn => {  // ← was '.period-btn'
+
+  document.querySelectorAll('.an-period-btn').forEach(btn => {
+
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.an-period-btn').forEach(b => b.classList.remove('active'));
+
+      // active ui
+      document.querySelectorAll('.an-period-btn')
+        .forEach(b => b.classList.remove('active'));
+
       btn.classList.add('active');
-      // Future: re-fetch and re-render charts with new period
+
+      const period = btn.dataset.period;
+
+      /* map hero buttons → real filters */
+      const map = {
+        may: 'this_month',
+        apr: 'last_month',
+        '3m': 'this_year',
+        '6m': 'this_year',
+      };
+
+      const targetFilter = map[period];
+
+      if (!targetFilter) return;
+
+      FILTER_STATE.time = targetFilter;
+
+      /* sync filter pills ui */
+      document.querySelectorAll('#timeFilterGroup .an-filter-pill')
+        .forEach(pill => {
+          pill.classList.toggle(
+            'active',
+            pill.dataset.value === targetFilter
+          );
+        });
+
+      applyFilters(FILTER_STATE);
     });
   });
 }
@@ -644,8 +676,193 @@ function initializeAnalytics() {
   initStreak();
   initPeriodSelector();
   initSidebar();
+  initFilterBar();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   loadAnalytics();
 });
+
+/* ═══════════════════════════════════════════════════════════════
+   ANALYTICS FILTERS — append this entire block to analytics.js
+   Adds: time filter + category filter with live chart re-render
+   Zero breaking changes to existing functions.
+═══════════════════════════════════════════════════════════════ */
+
+/* ── Filter state ────────────────────────────────────────── */
+const FILTER_STATE = {
+  time: 'this_month',
+  cat:  'all',
+};
+
+/* ── Cached Chart.js instances so we can destroy & re-init ── */
+const CHART_INSTANCES = {};
+
+/* ────────────────────────────────────────────────────────────
+   destroyCharts()
+   Call before re-rendering to prevent "canvas already in use"
+──────────────────────────────────────────────────────────── */
+function destroyCharts() {
+  ['radarChart', 'projectionChart', 'momChart'].forEach(id => {
+    const instance = Chart.getChart(id);
+    if (instance) instance.destroy();
+  });
+}
+
+/* ────────────────────────────────────────────────────────────
+   showFilterLoading() / hideFilterLoading()
+   Skeleton shimmer on canvas wrappers while fetching
+──────────────────────────────────────────────────────────── */
+function showFilterLoading() {
+  document.querySelectorAll('.an-canvas-wrap').forEach(el => {
+    el.style.opacity = '0.35';
+    el.style.pointerEvents = 'none';
+  });
+  document.getElementById('filterBar').classList.add('an-filter-loading');
+}
+
+function hideFilterLoading() {
+  document.querySelectorAll('.an-canvas-wrap').forEach(el => {
+    el.style.opacity = '1';
+    el.style.pointerEvents = '';
+  });
+  document.getElementById('filterBar').classList.remove('an-filter-loading');
+}
+
+/* ────────────────────────────────────────────────────────────
+   buildApiUrl(state)
+   Constructs /api/analytics?period=X&category=Y
+──────────────────────────────────────────────────────────── */
+function buildApiUrl(state) {
+  const params = new URLSearchParams();
+  params.set('period', state.time);
+  if (state.cat !== 'all') params.set('category', state.cat);
+  return `/api/analytics?${params.toString()}`;
+}
+
+/* ────────────────────────────────────────────────────────────
+   updateFilterSummary(state)
+   Shows / hides the "Filtered" badge and Reset button
+──────────────────────────────────────────────────────────── */
+function updateFilterSummary(state) {
+  const summary     = document.getElementById('filterSummary');
+  const summaryText = document.getElementById('filterSummaryText');
+  const resetBtn    = document.getElementById('filterReset');
+
+  const isDefault =
+    state.time === 'this_month' && state.cat === 'all';
+
+  if (isDefault) {
+    summary.classList.remove('visible');
+    resetBtn.style.display = 'none';
+    return;
+  }
+
+  const parts = [];
+  const timeLabels = {
+    this_week: 'This Week', last_month: 'Last Month', this_year: 'This Year',
+  };
+  if (state.time !== 'this_month') parts.push(timeLabels[state.time] || state.time);
+  if (state.cat !== 'all')         parts.push(state.cat.charAt(0).toUpperCase() + state.cat.slice(1));
+
+  summaryText.textContent = parts.join(' · ');
+  summary.classList.add('visible');
+  resetBtn.style.display = 'inline-flex';
+}
+
+/* ────────────────────────────────────────────────────────────
+   applyFilters(state)
+   Main orchestrator: fetch → destroy → re-render everything
+──────────────────────────────────────────────────────────── */
+async function applyFilters(state) {
+  showFilterLoading();
+  updateFilterSummary(state);
+
+  try {
+    const res = await fetch(buildApiUrl(state));
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    DATA = await res.json();
+    DATA.insights  = buildInsights();
+    DATA.insightIdx = 0;
+
+    /* ── Clear dynamic DOM sections ── */
+    const heatmapGrid  = document.getElementById('heatmapGrid');
+    const regretList   = document.getElementById('regretList');
+    const streakMonths = document.getElementById('streakMonths');
+    if (heatmapGrid)  heatmapGrid.innerHTML  = '';
+    if (regretList)   regretList.innerHTML   = '';
+    if (streakMonths) streakMonths.innerHTML = '';
+
+    /* ── Destroy existing charts ── */
+    destroyCharts();
+
+    /* ── Re-run all init functions ── */
+    initInsights();
+    initStatCards();
+    initRadar();
+    initProjection();
+    initMoM();
+    initHeatmap();
+    initStreak();
+
+  } catch (err) {
+    console.error('[Expenso] Filter fetch failed:', err);
+  } finally {
+    hideFilterLoading();
+  }
+}
+
+/* ────────────────────────────────────────────────────────────
+   initFilterBar()
+   Wires up pill click + reset button.
+   Call this once from initializeAnalytics().
+──────────────────────────────────────────────────────────── */
+function initFilterBar() {
+
+  /* ── Time pills ── */
+  document.getElementById('timeFilterGroup')
+    .querySelectorAll('.an-filter-pill')
+    .forEach(pill => {
+      pill.addEventListener('click', () => {
+        if (pill.dataset.value === FILTER_STATE.time) return; /* no-op */
+
+        document.querySelectorAll('#timeFilterGroup .an-filter-pill')
+          .forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+
+        FILTER_STATE.time = pill.dataset.value;
+        applyFilters(FILTER_STATE);
+      });
+    });
+
+  /* ── Category pills ── */
+  document.getElementById('catFilterGroup')
+    .querySelectorAll('.an-filter-pill')
+    .forEach(pill => {
+      pill.addEventListener('click', () => {
+        if (pill.dataset.value === FILTER_STATE.cat) return; /* no-op */
+
+        document.querySelectorAll('#catFilterGroup .an-filter-pill')
+          .forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+
+        FILTER_STATE.cat = pill.dataset.value;
+        applyFilters(FILTER_STATE);
+      });
+    });
+
+  /* ── Reset button ── */
+  document.getElementById('filterReset').addEventListener('click', () => {
+    FILTER_STATE.time = 'this_month';
+    FILTER_STATE.cat  = 'all';
+
+    /* reset pill UI */
+    document.querySelectorAll('#timeFilterGroup .an-filter-pill')
+      .forEach(p => p.classList.toggle('active', p.dataset.value === 'this_month'));
+    document.querySelectorAll('#catFilterGroup .an-filter-pill')
+      .forEach(p => p.classList.toggle('active', p.dataset.value === 'all'));
+
+    applyFilters(FILTER_STATE);
+  });
+}

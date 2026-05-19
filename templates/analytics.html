@@ -151,6 +151,64 @@
         </div>
       </div>
 
+      <!-- ══ FILTER BAR — insert directly after .an-insight-strip div ══ -->
+<!-- Place this block AFTER the closing </div> of .an-insight-strip -->
+
+      <!-- ══ FILTER BAR ══════════════════════════════════════════════ -->
+<div class="an-filter-bar glass-card" id="filterBar">
+  <div class="an-filter-row">
+
+    <div class="an-filter-section">
+      <span class="an-fg-label">Period</span>
+      <div class="an-filter-group" id="timeFilterGroup">
+        <button class="an-filter-pill active" data-filter="time" data-value="this_month">This Month</button>
+        <button class="an-filter-pill" data-filter="time" data-value="last_month">Last Month</button>
+        <button class="an-filter-pill" data-filter="time" data-value="this_week">This Week</button>
+        <button class="an-filter-pill" data-filter="time" data-value="this_year">This Year</button>
+      </div>
+    </div>
+
+    <div class="an-fg-divider"></div>
+
+    <div class="an-filter-section">
+      <span class="an-fg-label">Category</span>
+      <div class="an-filter-group" id="catFilterGroup">
+        <button class="an-filter-pill active" data-filter="cat" data-value="all">All</button>
+        <button class="an-filter-pill" data-filter="cat" data-value="food">
+          <span class="an-fp-swatch" style="background:#f97316"></span>Food
+        </button>
+        <button class="an-filter-pill" data-filter="cat" data-value="travel">
+          <span class="an-fp-swatch" style="background:#3b82f6"></span>Travel
+        </button>
+        <button class="an-filter-pill" data-filter="cat" data-value="shopping">
+          <span class="an-fp-swatch" style="background:#ec4899"></span>Shopping
+        </button>
+        <button class="an-filter-pill" data-filter="cat" data-value="bills">
+          <span class="an-fp-swatch" style="background:#f59e0b"></span>Bills
+        </button>
+        <button class="an-filter-pill" data-filter="cat" data-value="entertainment">
+          <span class="an-fp-swatch" style="background:#a855f7"></span>Entertainment
+        </button>
+        <button class="an-filter-pill" data-filter="cat" data-value="savings">
+          <span class="an-fp-swatch" style="background:#22c55e"></span>Savings
+        </button>
+      </div>
+    </div>
+
+    <div class="an-filter-actions">
+      <div class="an-filter-summary" id="filterSummary">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        <span id="filterSummaryText">Filtered</span>
+      </div>
+      <button class="an-filter-reset" id="filterReset" style="display:none">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        Reset
+      </button>
+    </div>
+
+  </div>
+</div>
+      
       <!-- ══ ROW 1 — Fingerprint radar + Projection line ═══════════ -->
       <div class="an-row-2">
 
