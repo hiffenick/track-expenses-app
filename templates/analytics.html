@@ -1,0 +1,306 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='analytics.css') }}">
+
+<div class="dashboard-root">
+
+  <!-- ── Sidebar ──────────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <span class="brand-name">Expenso</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="{{ url_for('dashboard.dashboard') }}" class="nav-item" data-page="dashboard">
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>
+        <span class="nav-label">Dashboard</span>
+      </a>
+      <a href="{{ url_for('addexpense.addexpense') }}" class="nav-item" data-page="add-expense">
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></span>
+        <span class="nav-label">Add Expense</span>
+      </a>
+      <a href="{{ url_for('viewexp.viewexps') }}" class="nav-item" data-page="view-expenses">
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
+        <span class="nav-label">View Expenses</span>
+      </a>
+      <a href="{{ url_for('analys.analytics') }}" class="nav-item active" data-page="analytics">
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg></span>
+        <span class="nav-label">Analytics</span>
+      </a>
+      <a href="" class="nav-item" data-page="categories">
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></span>
+        <span class="nav-label">Categories</span>
+      </a>
+      <div class="nav-divider"></div>
+      <a href="" class="nav-item" data-page="profile">
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>
+        <span class="nav-label">Profile &amp; Settings</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <div class="user-avatar">{{ user[0]|upper if user else 'U' }}</div>
+        <div class="user-info">
+          <span class="user-name">{{ user }}</span>
+          <span class="user-role">Personal Account</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Main ─────────────────────────────────────────────────── -->
+  <main class="main-content">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="page-breadcrumb">
+          <span class="breadcrumb-section">Dashboard</span>
+          <span class="breadcrumb-sep">/</span>
+          <span class="breadcrumb-current">Analytics</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn" title="Search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+        <button class="icon-btn notif-btn" title="Notifications">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="notif-dot"></span>
+        </button>
+        <div class="topbar-avatar">{{ user[0]|upper if user else 'U' }}</div>
+      </div>
+    </header>
+
+    <div class="dashboard-body an-body">
+
+      <!-- ══ HERO — same pattern as ve-hero ════════════════════════ -->
+      <div class="an-hero">
+        <div class="an-hero-left">
+          <p class="an-hero-sub">Overview · <span>2026</span></p>
+          <h1 class="an-hero-title">Analytics</h1>
+          <p class="an-hero-tagline">Your financial mirror — what the numbers are really saying.</p>
+        </div>
+        <!-- reuses ve-hero-stats pill strip, buttons replace stat values -->
+        <div class="ve-hero-stats an-period-strip">
+          <button class="an-period-btn active" data-period="may">
+            <span class="an-pb-label">Period</span>
+            <span class="an-pb-val">May</span>
+          </button>
+          <div class="ve-hero-divider"></div>
+          <button class="an-period-btn" data-period="apr">
+            <span class="an-pb-label">Period</span>
+            <span class="an-pb-val">Apr</span>
+          </button>
+          <div class="ve-hero-divider"></div>
+          <button class="an-period-btn" data-period="3m">
+            <span class="an-pb-label">Range</span>
+            <span class="an-pb-val">3M</span>
+          </button>
+          <div class="ve-hero-divider"></div>
+          <button class="an-period-btn" data-period="6m">
+            <span class="an-pb-label">Range</span>
+            <span class="an-pb-val">6M</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ══ INSIGHT STRIP — same glass-card as filter bar ══════════ -->
+      <div class="an-insight-strip glass-card">
+        <div class="an-ins-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        </div>
+        <p class="an-ins-text" id="insightText">
+          You've spent <strong>₹1,219 in May</strong> — Food accounts for 82% of that. Your no-spend streak is <strong>4 days</strong> and counting. 🎯
+        </p>
+        <button class="an-ins-btn" id="insightRefresh" title="Next insight">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+        </button>
+      </div>
+
+      <!-- ══ STAT CARDS — same surface/border as ve-hero-stats cells ══ -->
+      <div class="an-stats-grid">
+        <div class="an-stat-card">
+          <span class="an-sc-label">Total this month</span>
+          <span class="an-sc-value" id="statMonthTotal">₹0</span>
+          <span class="an-sc-delta an-delta--up" id="statDelta">— vs last month</span>
+        </div>
+        <div class="an-stat-card">
+          <span class="an-sc-label">No-spend streak</span>
+          <span class="an-sc-value"><span id="statStreak">0</span> <span class="an-sc-unit">days</span></span>
+          <span class="an-sc-delta an-delta--good" id="statStreakBest">Best this year: —</span>
+        </div>
+        <div class="an-stat-card">
+          <span class="an-sc-label">Transactions</span>
+          <span class="an-sc-value" id="statTxCount">0</span>
+          <span class="an-sc-delta an-delta--neutral">this period</span>
+        </div>
+        <div class="an-stat-card">
+          <span class="an-sc-label">Projected month-end</span>
+          <span class="an-sc-value" id="statProjected">₹—</span>
+          <span class="an-sc-delta an-delta--neutral" id="statProjRange">at current pace</span>
+        </div>
+      </div>
+
+      <!-- ══ ROW 1 — Fingerprint radar + Projection line ═══════════ -->
+      <div class="an-row-2">
+
+        <div class="an-card glass-card">
+          <div class="an-card-header">
+            <div>
+              <span class="an-card-eyebrow">Unique feature</span>
+              <h2 class="an-card-title">Spending fingerprint</h2>
+              <p class="an-card-sub">Your unique spending shape · compare months</p>
+            </div>
+            <div class="an-fp-legend">
+              <span class="an-fp-dot an-fp-may"></span><span class="an-fp-lbl">May</span>
+              <span class="an-fp-dot an-fp-apr"></span><span class="an-fp-lbl">Apr</span>
+            </div>
+          </div>
+          <div class="an-canvas-wrap an-canvas--radar">
+            <canvas id="radarChart"></canvas>
+          </div>
+        </div>
+
+        <div class="an-card glass-card">
+          <div class="an-card-header">
+            <div>
+              <span class="an-card-eyebrow">Predictive</span>
+              <h2 class="an-card-title">Projected month-end</h2>
+              <p class="an-card-sub">At your current pace</p>
+            </div>
+            <div class="an-proj-pill">
+              <span class="an-pp-label">Projected</span>
+              <span class="an-pp-val" id="projVal">₹—</span>
+            </div>
+          </div>
+          <div class="an-proj-range">
+            <span class="an-pr-label">Confidence range</span>
+            <span class="an-pr-val" id="projRange">₹— — ₹—</span>
+          </div>
+          <div class="an-canvas-wrap an-canvas--proj">
+            <canvas id="projectionChart"></canvas>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ══ ROW 2 — Month-over-Month stacked bar ═══════════════════ -->
+      <div class="an-card glass-card an-card--full">
+        <div class="an-card-header">
+          <div>
+            <span class="an-card-eyebrow">6-month view</span>
+            <h2 class="an-card-title">Month-over-month breakdown</h2>
+            <p class="an-card-sub">Click any bar segment to drill into that category</p>
+          </div>
+          <div class="an-mom-legend" id="momLegend"></div>
+        </div>
+        <div class="an-canvas-wrap an-canvas--mom">
+          <canvas id="momChart"></canvas>
+        </div>
+        <div class="an-drill-panel" id="drillPanel" hidden>
+          <div class="an-drill-header">
+            <span class="an-drill-title" id="drillTitle"></span>
+            <button class="an-drill-close" id="drillClose">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+          <div class="an-drill-body" id="drillBody"></div>
+        </div>
+      </div>
+
+      <!-- ══ ROW 3 — Heatmap + Regret Score ════════════════════════ -->
+      <div class="an-row-2">
+
+        <div class="an-card glass-card">
+          <div class="an-card-header">
+            <div>
+              <span class="an-card-eyebrow">Spending heatmap</span>
+              <h2 class="an-card-title">When do you spend?</h2>
+              <p class="an-card-sub">Hover any cell for details</p>
+            </div>
+            <div class="an-hm-scale">
+              <span class="an-hm-lbl">Low</span>
+              <div class="an-hm-track"></div>
+              <span class="an-hm-lbl">High</span>
+            </div>
+          </div>
+          <div class="an-hm-days">
+            <span></span>
+            <span>Mon</span><span>Tue</span><span>Wed</span>
+            <span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+          </div>
+          <div class="an-hm-grid" id="heatmapGrid"></div>
+        </div>
+
+        <div class="an-card glass-card">
+          <div class="an-card-header">
+            <div>
+              <span class="an-card-eyebrow">Unique feature</span>
+              <h2 class="an-card-title">Regret score</h2>
+              <p class="an-card-sub">Tag expenses — watch patterns emerge</p>
+            </div>
+          </div>
+          <div class="an-regret-list" id="regretList"></div>
+          <div class="an-regret-hint">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span>Open any expense and tag it <em>"Worth it"</em> or <em>"Regret"</em> to build your score.</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ══ ROW 4 — No-spend Streak Calendar ══════════════════════ -->
+      <div class="an-card glass-card an-card--full">
+        <div class="an-card-header">
+          <div>
+            <span class="an-card-eyebrow">Gamified streaks</span>
+            <h2 class="an-card-title">No-spend habit streaks</h2>
+            <p class="an-card-sub">Green = no discretionary spend that day · hover for details</p>
+          </div>
+          <div class="an-streak-stats">
+            <div class="an-ss-stat">
+              <span class="an-ss-val" id="ssCurrentStreak">0</span>
+              <span class="an-ss-lbl">Current</span>
+            </div>
+            <div class="an-ss-stat">
+              <span class="an-ss-val" id="ssBestStreak">0</span>
+              <span class="an-ss-lbl">Best</span>
+            </div>
+            <div class="an-ss-stat">
+              <span class="an-ss-val" id="ssNoSpendDays">0</span>
+              <span class="an-ss-lbl">No-spend days</span>
+            </div>
+          </div>
+        </div>
+        <div class="an-streak-months" id="streakMonths"></div>
+        <div class="an-streak-legend">
+          <span class="an-sl-box an-sl--future"></span><span>Future</span>
+          <span class="an-sl-box an-sl--spent"></span><span>Spent</span>
+          <span class="an-sl-box an-sl--light"></span><span>Light</span>
+          <span class="an-sl-box an-sl--nospend"></span><span>No spend</span>
+          <span class="an-sl-box an-sl--streak"></span><span>On streak 🔥</span>
+        </div>
+      </div>
+
+    </div><!-- /dashboard-body -->
+  </main>
+</div>
+
+<!-- Sidebar overlay -->
+ <div class="an-hm-tooltip" id="heatmapTooltip"></div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="toast" id="navToast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='analytics.js') }}"></script>
+{% endblock %}
