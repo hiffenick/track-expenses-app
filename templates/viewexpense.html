@@ -280,7 +280,9 @@
             <!-- ── Expense rows ────────────────────────────────────────── -->
             <div class="ec-list" id="ecList">
               {% for exp in expenses %}
-              <div class="ec-row" 
+              <div class="ec-row 
+              {% if exp.is_regret == True %}ec-row--regret{% endif %}
+                {% if exp.is_regret == False %}ec-row--worth{% endif %}" 
                   data-id="{{ exp.id }}"
                   data-cat="{{ exp.category_id }}"
                   data-cat-name="{{ exp.category|lower }}"
@@ -312,6 +314,27 @@
 
                 <!-- Actions (shown on hover) -->
                 <div class="ec-actions">
+                  <button class="ec-btn ec-btn--worth
+                    {% if exp.is_regret == False %}ec-btn--worth-active{% endif %}"
+                    data-regret-id="{{ exp.id }}"
+                    data-regret-val="false"
+                    title="Worth it">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  </button>
+                  <button class="ec-btn ec-btn--regret
+                    {% if exp.is_regret == True %}ec-btn--regret-active{% endif %}"
+                    data-regret-id="{{ exp.id }}"
+                    data-regret-val="true"
+                    title="Regret">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5">
+                      <line x1="18" y1="6" x2="6" y2="18"/>
+                      <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                  </button>
                   <button class="ec-btn ec-btn--edit"
                           onclick="ecHandleEdit({{ exp.id }})"
                           title="Edit">
@@ -332,6 +355,17 @@
                       <path d="M9 6V4h6v2"/>
                     </svg>
                   </button>
+                </div>
+
+                <!-- Regret note chips — hidden until regret tapped -->
+                <div class="ec-regret-note-row" id="regretNote_{{ exp.id }}" style="display:none;">
+                  <div class="ec-regret-chips">
+                    <button class="ec-regret-chip" data-note="impulse buy">impulse buy</button>
+                    <button class="ec-regret-chip" data-note="overpriced">overpriced</button>
+                    <button class="ec-regret-chip" data-note="unnecessary">unnecessary</button>
+                    <button class="ec-regret-chip" data-note="emotional spend">emotional spend</button>
+                    <button class="ec-regret-chip ec-regret-skip">skip</button>
+                  </div>
                 </div>
 
               </div>

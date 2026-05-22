@@ -7,6 +7,7 @@ from sqlalchemy import func, extract
 from datetime import date, timedelta
 from calendar import monthrange
 import datetime
+from datetime import date
 
 analytics_route = Blueprint('analys', __name__)
 
@@ -105,7 +106,8 @@ def _resolve_period(period: str, today: date):
 @login_required
 def analytics_api():
     uid    = current_user.user_id
-    today  = date.today()
+    today = date.today()
+
  
     # ── Read query params ──────────────────────────────────────
     period   = request.args.get('period',   'this_month')   # time filter
@@ -123,33 +125,41 @@ def analytics_api():
     days_in_month = pr['days_in_month']
     focal_year    = pr['this_year']
     focal_month   = pr['this_month']
- 
-    # ── Base expense query helper (applies user + date + optional cat) ──
-    def base_q():
-        q = (db.session.query(expenses)
-             .filter(expenses.user_id == uid)
-             .filter(expenses.expense_date >= start_date)
-             .filter(expenses.expense_date <= end_date))
-        if category != 'all':
-            q = (q.join(Category, expenses.category_id == Category.category_id)
-                  .filter(func.lower(Category.name) == category))
-        return q
- 
+
+    regret_q = (
+        db.session.query(func.count(expenses.expense_id))
+        .join(Category, expenses.category_id == Category.category_id)
+        .filter(expenses.user_id == uid)
+        .filter(expenses.is_regret == True)
+        .filter(expenses.expense_date >= start_date)
+        .filter(expenses.expense_date <= end_date)
+    )
+
+    if category != 'all':
+        regret_q = regret_q.filter(func.lower(Category.name) == category)
+
+
+    regret_count = regret_q.scalar() or 0
+
     # ── 1. MoM per category ────────────────────────────────────
     cat_colors = {
         'food': '#f97316', 'travel': '#3b82f6', 'shopping': '#ec4899',
         'bills': '#f59e0b', 'entertainment': '#a855f7', 'savings': '#22c55e',
     }
  
-    mom_q = (db.session.query(
-                 Category.name,
-                 extract('year',  expenses.expense_date).label('yr'),
-                 extract('month', expenses.expense_date).label('mo'),
-                 func.sum(expenses.expense_amount).label('total'))
-             .join(expenses, expenses.category_id == Category.category_id)
-             .filter(expenses.user_id == uid)
-             .filter(expenses.expense_date >= months_slots[0]['year'].__str__() + '-01-01')
-             .filter(expenses.expense_date <= end_date))
+    mom_q = (
+        db.session.query(
+            Category.name,
+            extract('year', expenses.expense_date).label('yr'),
+            extract('month', expenses.expense_date).label('mo'),
+            func.sum(expenses.expense_amount).label('total')
+        )
+        .join(expenses, expenses.category_id == Category.category_id)
+        .filter(expenses.user_id == uid)
+        .filter(expenses.expense_date >= start_date)
+        .filter(expenses.expense_date <= end_date)
+    )
+        
  
     if category != 'all':
         mom_q = mom_q.filter(func.lower(Category.name) == category)
@@ -352,8 +362,35 @@ def analytics_api():
  
     # ── 8. Transaction count ───────────────────────────────────
     tx_count = len(current_month_rows)
- 
+    
+    regret_rows = (
+        db.session.query(
+            Category.name,
+            func.count(expenses.expense_id)
+        )
+        .join(Category, expenses.category_id == Category.category_id)
+        .filter(expenses.user_id == uid)
+        .filter(expenses.is_regret == True)
+    )
+
+    if category != 'all':
+        regret_rows = regret_rows.filter(func.lower(Category.name) == category)
+
+    regret_rows = regret_rows.group_by(Category.name).all()
+
+    total_regret = sum(r[1] for r in regret_rows) or 1
+
+    regret = [
+        {
+            "cat": r[0],
+            "pct": round((r[1] / total_regret) * 100),
+            "color": cat_colors.get(r[0].lower(), "#888")
+        }
+        for r in regret_rows
+    ]
     return jsonify({
+        'regret_count': regret_count,
+        'regret': regret,
         'months':         [s['label'] for s in months_slots],
         'mom':            mom,
         'cat_colors':     cat_colors,
@@ -383,6 +420,3 @@ def analytics_api():
         },
     })
  
-
-
-

@@ -19,6 +19,8 @@ def serialize(e):
         'category':    e.category.name.lower() if e.category else 'other',
         'category_id': e.category_id,
         'icon':        e.category.icon if e.category else '💸',
+        'is_regret':   e.is_regret,
+    'regret_note': e.regret_note or '',
     }
 
 @view_expenses_route.route('/viewexps', methods=['GET'])
@@ -74,7 +76,7 @@ def chart_data():
         q = q.filter(extract('month', Expense.expense_date) == month)
 
     expense_rows = q.all()
-
+    regret_count = sum(1 for e in expense_rows if e.is_regret)
     # ── Daily aggregation ─────────────────────────────────────────────────────
     daily = {}
     for e in expense_rows:
@@ -140,6 +142,7 @@ def chart_data():
         'category_breakdown': category_breakdown,
         'total':              round(running, 2),
         'tx_count':           len(expense_rows),
+        'regret_count': regret_count,
         'month':              month,
         'year':               year,
     })
@@ -293,3 +296,17 @@ def edit_expense(expense_id):
             'success': False,
             'message': 'Failed to update expense.'
         }), 500
+    
+@view_expenses_route.route('/api/expenses/<int:expense_id>/regret', methods=['PATCH'])
+@login_required
+def tag_regret(expense_id):
+    from flask import request as req
+    data = req.get_json()
+    exp = Expense.query.filter_by(
+        expense_id=expense_id,
+        user_id=current_user.user_id
+    ).first_or_404()
+    exp.is_regret = bool(data.get('is_regret', False))
+    exp.regret_note = data.get('regret_note') or None
+    db.session.commit()
+    return jsonify({'success': True})

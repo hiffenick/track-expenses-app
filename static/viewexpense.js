@@ -210,10 +210,10 @@ function updateHero(filtered) {
   const lastM    = `${lastDate.getFullYear()}-${String(lastDate.getMonth() + 1).padStart(2, '0')}`;
 
   const thisTotal = RAW_EXPENSES
-    .filter(e => e.date.startsWith(thisM))
+    .filter(e => e.date.startsWith(thisM) && !e.is_regret)
     .reduce((s, e) => s + e.amount, 0);
   const lastTotal = RAW_EXPENSES
-    .filter(e => e.date.startsWith(lastM))
+    .filter(e => e.date.startsWith(thisM) && !e.is_regret)
     .reduce((s, e) => s + e.amount, 0);
 
   document.getElementById('heroMonthTotal').textContent = fmtINR(thisTotal);
@@ -246,11 +246,13 @@ function updateSidebar(filtered) {
 
   // When searching, sidebar shows breakdown of search results;
   // otherwise show the selected/current month
+  const cleanFiltered = filtered.filter(e => !e.is_regret);
+
   const pool = state.search
     ? filtered
     : (state.month !== 'all'
         ? filtered
-        : RAW_EXPENSES.filter(e => e.date.startsWith(mKey)));
+        : RAW_EXPENSES.filter(e => e.date.startsWith(mKey) && !e.is_regret));
 
   const catTotals = {};
   pool.forEach(e => { catTotals[e.category] = (catTotals[e.category] || 0) + e.amount; });
@@ -712,7 +714,9 @@ function updateChartHeader(month, year, expenses) {
   }
 
   // stats
-  const total = expenses.reduce((sum, e) => sum + Number(e.amount), 0);
+  const total = expenses
+  .filter(e => !e.is_regret)
+  .reduce((sum, e) => sum + Number(e.amount), 0);
   totalLabel.textContent = `₹${total.toLocaleString()}`;
   txLabel.textContent = expenses.length;
 }
@@ -724,6 +728,7 @@ function getDaysInMonth(month, year) {
 
 //We convert expenses → daily buckets:
 function buildDailySeries(expenses, month, year) {
+  expenses = expenses.filter(e => !e.is_regret);
   if (month === "all") {
     // Monthly series: Jan–Dec
     const months = Array(12).fill(0);
@@ -856,3 +861,91 @@ function renderChart(dailyData) {
 
  document.addEventListener('DOMContentLoaded', () => {
  });
+
+ /* ══════════════════════════════════════════════════════════════
+   REGRET TAGGING
+══════════════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+
+  const csrf = () => document.querySelector('meta[name="csrf-token"]')
+    ?.getAttribute('content');
+
+  document.getElementById('ecList')?.addEventListener('click', async (e) => {
+
+    // ── Regret / Worth it button ───────────────────────────────
+    const btn = e.target.closest('[data-regret-val]');
+    if (btn) {
+      e.stopPropagation();
+      const id       = btn.dataset.regretId;
+      const isRegret = btn.dataset.regretVal === 'true';
+      const row      = btn.closest('.ec-row');
+      const noteRow  = document.getElementById(`regretNote_${id}`);
+
+      // Find both buttons for this row
+      const worthBtn  = row.querySelector('[data-regret-val="false"]');
+      const regretBtn = row.querySelector('[data-regret-val="true"]');
+
+      // Toggle off if already active
+      const wasActive = btn.classList.contains(
+        isRegret ? 'ec-btn--regret-active' : 'ec-btn--worth-active'
+      );
+      const newValue = wasActive ? null : isRegret;
+
+      // Update button styles instantly
+      worthBtn?.classList.remove('ec-btn--worth-active');
+      regretBtn?.classList.remove('ec-btn--regret-active');
+      if (newValue === false) worthBtn?.classList.add('ec-btn--worth-active');
+      if (newValue === true)  regretBtn?.classList.add('ec-btn--regret-active');
+
+      // Update row border
+      row?.classList.remove('ec-row--worth', 'ec-row--regret');
+      if (newValue === false) row?.classList.add('ec-row--worth');
+      if (newValue === true)  row?.classList.add('ec-row--regret');
+
+      // Show note chips only for regret
+      if (noteRow) {
+        noteRow.style.display = (newValue === true) ? 'block' : 'none';
+      }
+
+      // PATCH to backend
+      try {
+        await fetch(`/api/expenses/${id}/regret`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrf()
+          },
+          body: JSON.stringify({ is_regret: newValue })
+        });
+      } catch (err) {
+        console.error('Regret tag failed:', err);
+      }
+      return;
+    }
+
+    // ── Note chip ──────────────────────────────────────────────
+    const chip = e.target.closest('.ec-regret-chip');
+    if (chip) {
+      e.stopPropagation();
+      const noteRow  = chip.closest('.ec-regret-note-row');
+      const id       = noteRow?.id?.replace('regretNote_', '');
+      const note     = chip.dataset.note || null;
+
+      noteRow.style.display = 'none';
+
+      try {
+        await fetch(`/api/expenses/${id}/regret`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrf()
+          },
+          body: JSON.stringify({ is_regret: true, regret_note: note })
+        });
+      } catch (err) {
+        console.error('Regret note failed:', err);
+      }
+    }
+
+  });
+});

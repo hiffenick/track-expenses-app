@@ -1328,7 +1328,7 @@
 
 /* ── Column header row ─────────────────────────────────────── */
 .ec-list-header {
-  display: flex;
+  /* display: flex; */
   align-items: center;
   justify-content: space-between;
   padding: 0 0 10px;
@@ -1345,20 +1345,23 @@
 
 .ec-lh-cols {
   display: grid;
-  grid-template-columns: 140px 1fr 100px 90px 72px;
+  grid-template-columns: 140px 1fr 100px 90px 110px;
   gap: 12px;
+
   font-size: 10.5px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--text-muted);
-  padding-right: 4px;
+
+  padding: 0 20px 10px;   /* ✅ IMPORTANT FIX */
+  margin-bottom: 2px;
 }
 
 /* ── Single expense row ────────────────────────────────────── */
 .ec-row {
   display: grid;
-  grid-template-columns: 140px 1fr 100px 90px 72px;
+  grid-template-columns: 140px 1fr 100px 90px 110px;
   gap: 12px;
   align-items: center;
   padding: 14px 20px;
@@ -1490,7 +1493,7 @@
   font-size: 16px;
   color: var(--rose);
   letter-spacing: -0.3px;
-  text-align: right;
+  text-align: center;
   font-weight: 400;
 }
 
@@ -1676,4 +1679,71 @@
 @keyframes emRowFlash {
   0%, 100% { background: transparent; }
   30%       { background: rgba(232, 168, 76, 0.1); }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   REGRET TAGGING
+══════════════════════════════════════════════════════════════ */
+
+/* Row left-border indicator */
+.ec-row--worth  { border-left: 2px solid rgba(34, 197, 94, 0.45); }
+.ec-row--regret { border-left: 2px solid rgba(248, 113, 113, 0.45); }
+
+/* Worth it button */
+.ec-btn--worth:hover,
+.ec-btn--worth-active {
+  background: rgba(34, 197, 94, 0.12) !important;
+  border-color: rgba(34, 197, 94, 0.4) !important;
+  color: #22c55e !important;
+}
+
+/* Regret button */
+.ec-btn--regret:hover,
+.ec-btn--regret-active {
+  background: rgba(248, 113, 113, 0.12) !important;
+  border-color: rgba(248, 113, 113, 0.4) !important;
+  color: var(--rose) !important;
+}
+
+/* Note chips row */
+.ec-regret-note-row {
+  grid-column: 1 / -1;
+  padding: 6px 0 2px;
+  animation: fadeSlideUp 0.2s ease;
+}
+
+.ec-regret-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ec-regret-chip {
+  padding: 4px 12px;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text-secondary);
+  font-size: 11.5px;
+  font-weight: 500;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.ec-regret-chip:hover {
+  border-color: rgba(248, 113, 113, 0.4);
+  background: rgba(248, 113, 113, 0.08);
+  color: var(--rose);
+}
+
+.ec-regret-skip {
+  border-style: dashed;
+  color: var(--text-muted);
+}
+
+.ec-regret-skip:hover {
+  border-color: var(--border-hover);
+  background: var(--surface-2);
+  color: var(--text-secondary);
 }

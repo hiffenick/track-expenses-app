@@ -12,6 +12,13 @@
 
 let DATA = null;
 
+const FILTER_STATE = {
+  time: 'this_month',
+  cat: 'all',
+};
+
+const CHART_INSTANCES = {};
+
 const COLORS = {
   food: '#f97316',
   travel: '#3b82f6',
@@ -478,20 +485,24 @@ function initRegret() {
   const list = $('regretList');
   if (!list) return;
 
-  DATA.regret.forEach(item => {
+  (Array.isArray(DATA.regret) ? DATA.regret : []).forEach(item => {
     const el = document.createElement('div');
     el.className = 'an-regret-item';
+
     el.innerHTML = `
       <span class="an-regret-cat">${item.cat}</span>
       <div class="an-regret-bar-wrap">
-        <div class="an-regret-bar" style="width:0%; background:${item.color}" data-target="${item.pct}"></div>
+        <div class="an-regret-bar"
+             style="width:0%; background:${item.color}"
+             data-target="${item.pct}">
+        </div>
       </div>
       <span class="an-regret-pct">${item.pct}%</span>
     `;
+
     list.appendChild(el);
   });
 
-  // Animate bars in
   setTimeout(() => {
     document.querySelectorAll('.an-regret-bar').forEach(bar => {
       bar.style.transition = 'width 0.6s ease';
@@ -570,41 +581,15 @@ function initStreak() {
    HTML class: an-period-btn
 ════════════════════════════════ */
 function initPeriodSelector() {
-
   document.querySelectorAll('.an-period-btn').forEach(btn => {
-
     btn.addEventListener('click', () => {
 
-      // active ui
       document.querySelectorAll('.an-period-btn')
         .forEach(b => b.classList.remove('active'));
 
       btn.classList.add('active');
 
-      const period = btn.dataset.period;
-
-      /* map hero buttons → real filters */
-      const map = {
-        may: 'this_month',
-        apr: 'last_month',
-        '3m': 'this_year',
-        '6m': 'this_year',
-      };
-
-      const targetFilter = map[period];
-
-      if (!targetFilter) return;
-
-      FILTER_STATE.time = targetFilter;
-
-      /* sync filter pills ui */
-      document.querySelectorAll('#timeFilterGroup .an-filter-pill')
-        .forEach(pill => {
-          pill.classList.toggle(
-            'active',
-            pill.dataset.value === targetFilter
-          );
-        });
+      FILTER_STATE.time = btn.dataset.period;
 
       applyFilters(FILTER_STATE);
     });
@@ -672,7 +657,7 @@ function initializeAnalytics() {
   initProjection();
   initMoM();
   initHeatmap();
-  // initRegret();
+  initRegret();
   initStreak();
   initPeriodSelector();
   initSidebar();
@@ -690,13 +675,10 @@ document.addEventListener('DOMContentLoaded', () => {
 ═══════════════════════════════════════════════════════════════ */
 
 /* ── Filter state ────────────────────────────────────────── */
-const FILTER_STATE = {
-  time: 'this_month',
-  cat:  'all',
-};
+
 
 /* ── Cached Chart.js instances so we can destroy & re-init ── */
-const CHART_INSTANCES = {};
+
 
 /* ────────────────────────────────────────────────────────────
    destroyCharts()
@@ -789,6 +771,7 @@ async function applyFilters(state) {
     /* ── Clear dynamic DOM sections ── */
     const heatmapGrid  = document.getElementById('heatmapGrid');
     const regretList   = document.getElementById('regretList');
+    if (regretList) regretList.innerHTML = '';
     const streakMonths = document.getElementById('streakMonths');
     if (heatmapGrid)  heatmapGrid.innerHTML  = '';
     if (regretList)   regretList.innerHTML   = '';
@@ -805,6 +788,7 @@ async function applyFilters(state) {
     initMoM();
     initHeatmap();
     initStreak();
+    initRegret();
 
   } catch (err) {
     console.error('[Expenso] Filter fetch failed:', err);

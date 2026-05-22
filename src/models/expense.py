@@ -18,4 +18,5 @@ class expenses(db.Model):
     category_id = db.Column(db.Integer, db.ForeignKey('categories.category_id'), nullable=False)
     category = db.relationship('Category', back_populates='expenses')
     
-    
+    is_regret = db.Column(db.Boolean, nullable=True, default=None)
+    regret_note = db.Column(db.Text, nullable=True)
