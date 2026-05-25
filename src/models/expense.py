@@ -15,7 +15,7 @@ class expenses(db.Model):
     author = db.relationship('User', back_populates='expenses')
 
     # 🔥 NEW RELATION (IMPORTANT)
-    category_id = db.Column(db.Integer, db.ForeignKey('categories.category_id'), nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey('categories.category_id'), nullable=True)
     category = db.relationship('Category', back_populates='expenses')
     
     is_regret = db.Column(db.Boolean, nullable=True, default=None)

@@ -1,0 +1,406 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='categories.css') }}">
+
+<div class="dashboard-root">
+
+  <!-- ── Sidebar ──────────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <span class="brand-name">Expenso</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="{{ url_for('dashboard.dashboard') }}" class="nav-item" data-page="dashboard">
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>
+        <span class="nav-label">Dashboard</span>
+      </a>
+      <a href="{{ url_for('addexpense.addexpense') }}" class="nav-item" data-page="add-expense">
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></span>
+        <span class="nav-label">Add Expense</span>
+      </a>
+      <a href="{{ url_for('viewexp.viewexps') }}" class="nav-item" data-page="view-expenses">
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
+        <span class="nav-label">View Expenses</span>
+      </a>
+      <a href="{{ url_for('analys.analytics') }}" class="nav-item" data-page="analytics">
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg></span>
+        <span class="nav-label">Analytics</span>
+      </a>
+      <a href="{{ url_for('categ.categories') }}" class="nav-item active" data-page="categories">
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></span>
+        <span class="nav-label">Categories</span>
+      </a>
+      
+      <div class="nav-divider"></div>
+      <a href="" class="nav-item" data-page="profile">
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>
+        <span class="nav-label">Profile &amp; Settings</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <div class="user-avatar">{{ user[0]|upper if user else 'U' }}</div>
+        <div class="user-info">
+          <span class="user-name">{{ user }}</span>
+          <span class="user-role">Personal Account</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Main ─────────────────────────────────────────────────── -->
+  <main class="main-content">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="page-breadcrumb">
+          <span class="breadcrumb-section">Dashboard</span>
+          <span class="breadcrumb-sep">/</span>
+          <span class="breadcrumb-current">Categories</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn" title="Search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+        <button class="icon-btn notif-btn" title="Notifications">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="notif-dot"></span>
+        </button>
+        <div class="topbar-avatar">{{ user[0]|upper if user else 'U' }}</div>
+      </div>
+    </header>
+
+    <div class="dashboard-body ct-body">
+
+      <!-- ══ HERO ════════════════════════════════════════════════ -->
+      <div class="ct-hero">
+        <div class="ct-hero-left">
+          <p class="ct-hero-sub">Control Room · <span>2026</span></p>
+          <h1 class="ct-hero-title">Categories</h1>
+          <p class="ct-hero-tagline">Budgets, health indicators, and full control.</p>
+        </div>
+        <div class="ct-hero-actions">
+          <!-- View toggle -->
+          <div class="ct-view-toggle">
+            <button class="ct-vt-btn active" id="viewGrid" title="Card grid">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+              Grid
+            </button>
+            <button class="ct-vt-btn" id="viewTable" title="Table view">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+              Table
+            </button>
+          </div>
+          <!-- Add category -->
+          <button class="ct-add-btn" id="openCreateModal">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            New Category
+          </button>
+        </div>
+      </div>
+
+      <!-- ══ SUMMARY STRIP ══════════════════════════════════════ -->
+      <div class="ct-summary-strip glass-card">
+        <div class="ct-ss-stat">
+          <span class="ct-ss-label">Total budget</span>
+          <span class="ct-ss-value" id="ssTotalBudget">₹0</span>
+        </div>
+        <div class="ct-ss-divider"></div>
+        <div class="ct-ss-stat">
+          <span class="ct-ss-label">Spent this month</span>
+          <span class="ct-ss-value" id="ssSpentMonth">₹0</span>
+        </div>
+        <div class="ct-ss-divider"></div>
+        <div class="ct-ss-stat">
+          <span class="ct-ss-label">Remaining</span>
+          <span class="ct-ss-value ct-ss-remaining" id="ssRemaining">₹0</span>
+        </div>
+        <div class="ct-ss-divider"></div>
+        <div class="ct-ss-stat">
+          <span class="ct-ss-label">Over budget</span>
+          <span class="ct-ss-value ct-ss-overbudget" id="ssOverBudget">0</span>
+        </div>
+        <div class="ct-ss-divider"></div>
+        <div class="ct-ss-stat">
+          <span class="ct-ss-label">Auto-tag rules</span>
+          <span class="ct-ss-value" id="ssRulesCount">0 <span class="ct-ss-unit">active</span></span>
+        </div>
+      </div>
+
+      <!-- ══ GRID VIEW ══════════════════════════════════════════ -->
+      <div class="ct-grid" id="catGrid">
+        <!-- Populated by JS -->
+        <div class="ct-grid-skeleton">
+          <div class="ct-skel-card"></div>
+          <div class="ct-skel-card"></div>
+          <div class="ct-skel-card"></div>
+          <div class="ct-skel-card"></div>
+        </div>
+      </div>
+
+      <!-- ══ TABLE VIEW (hidden by default) ════════════════════ -->
+      <div class="ct-table-wrap" id="catTable" hidden>
+        <div class="ct-table-header">
+          <span>Category</span>
+          <span>Budget</span>
+          <span>Spent</span>
+          <span>Remaining</span>
+          <span>Status</span>
+          <span>Rollover</span>
+          <span>Actions</span>
+        </div>
+        <div class="ct-table-body" id="catTableBody">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- ══ AUTO-TAG RULES ══════════════════════════════════════ -->  
+      <!-- <div class="ct-rules-section">  LATER UNCOMMENT IT WHEN WE BUILD VERSION WITH AUTO TAG MAKE SURE UNCOMMENT JS LINE ALSO
+        <div class="ct-rules-header">
+          <div>
+            <span class="ct-rules-eyebrow">Unique feature</span>
+            <h2 class="ct-rules-title">Auto-tag rules</h2>
+            <p class="ct-rules-sub">Automatically categorise expenses by title patterns or amounts</p>
+          </div>
+          <button class="ct-add-rule-btn" id="openRuleModal">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Rule
+          </button>
+        </div>
+        <div class="ct-rules-list" id="rulesList">
+           Populated by JS
+        </div>
+      </div> -->
+
+    </div><!-- /dashboard-body -->
+  </main>
+</div>
+
+<!-- ── Sidebar overlay ────────────────────────────────────── -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="toast" id="navToast"></div>
+
+<!-- ════════════════════════════════════════════════════════════
+     CREATE / EDIT CATEGORY MODAL
+════════════════════════════════════════════════════════════ -->
+<div class="ct-modal-backdrop" id="createModal" hidden>
+  <div class="ct-modal">
+
+    <div class="ct-modal-header">
+      <div class="ct-modal-header-left">
+        <div class="ct-modal-icon-wrap">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <div>
+          <h3 class="ct-modal-title" id="createModalTitle">New Category</h3>
+          <p class="ct-modal-sub">Fill in details — preview updates live</p>
+        </div>
+      </div>
+      <button class="ct-modal-close" id="createModalClose">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <!-- Live preview card -->
+    <div class="ct-modal-preview-wrap">
+      <span class="ct-mp-label">Preview</span>
+      <div class="ct-preview-card" id="previewCard">
+        <div class="ct-preview-top">
+          <div class="ct-preview-icon" id="previewIcon">🏷️</div>
+          <span class="ct-preview-name" id="previewName">Category Name</span>
+          <span class="ct-preview-badge ct-badge--on-track">On track</span>
+        </div>
+        <div class="ct-preview-wheel-wrap">
+          <svg class="ct-preview-wheel" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--bg-3)" stroke-width="8"/>
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--teal)"
+              stroke-width="8" stroke-linecap="round"
+              stroke-dasharray="188.5" stroke-dashoffset="188.5"
+              transform="rotate(-90 40 40)"
+              id="previewArc"/>
+          </svg>
+          <span class="ct-preview-pct" id="previewPct">0%</span>
+        </div>
+        <div class="ct-preview-budget-row">
+          <span class="ct-preview-spent" id="previewSpent">₹0 spent</span>
+          <span class="ct-preview-limit" id="previewLimit">of ₹0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fields -->
+    <div class="ct-modal-fields">
+
+      <div class="ct-modal-row-2">
+        <!-- Name -->
+        <div class="ct-field">
+          <label class="ct-field-label" for="catName">Name <span class="ct-req">*</span></label>
+          <div class="ct-input-wrap">
+            <input type="text" id="catName" class="ct-input" placeholder="e.g. Groceries" maxlength="60" autocomplete="off">
+          </div>
+          <span class="ct-field-error" id="catNameError"></span>
+        </div>
+
+        <!-- Icon picker -->
+        <div class="ct-field">
+          <label class="ct-field-label">Icon <span class="ct-req">*</span></label>
+          <div class="ct-emoji-row" id="emojiRow">
+            <button class="ct-emoji-btn active" data-emoji="🏷️">🏷️</button>
+            <button class="ct-emoji-btn" data-emoji="🍔">🍔</button>
+            <button class="ct-emoji-btn" data-emoji="✈️">✈️</button>
+            <button class="ct-emoji-btn" data-emoji="🛍️">🛍️</button>
+            <button class="ct-emoji-btn" data-emoji="💡">💡</button>
+            <button class="ct-emoji-btn" data-emoji="🏥">🏥</button>
+            <button class="ct-emoji-btn" data-emoji="🎬">🎬</button>
+            <button class="ct-emoji-btn" data-emoji="🚗">🚗</button>
+            <button class="ct-emoji-btn" data-emoji="📚">📚</button>
+            <button class="ct-emoji-btn" data-emoji="🏋️">🏋️</button>
+            <button class="ct-emoji-btn" data-emoji="🐾">🐾</button>
+            <button class="ct-emoji-btn" data-emoji="🎮">🎮</button>
+            <button class="ct-emoji-btn" data-emoji="☕">☕</button>
+            <button class="ct-emoji-btn" data-emoji="🌿">🌿</button>
+            <button class="ct-emoji-btn" data-emoji="💸">💸</button>
+            <button class="ct-emoji-btn ct-emoji-custom" id="customEmojiBtn" title="Type custom emoji">+</button>
+          </div>
+          <input type="text" id="customEmojiInput" class="ct-input ct-custom-emoji-input" placeholder="Paste any emoji…" maxlength="4" hidden>
+        </div>
+      </div>
+
+      <!-- Monthly budget -->
+      <div class="ct-field">
+        <label class="ct-field-label" for="catBudget">Monthly budget <span class="ct-req">*</span></label>
+        <div class="ct-input-wrap ct-budget-wrap">
+          <span class="ct-currency-prefix">₹</span>
+          <input type="number" id="catBudget" class="ct-input ct-budget-input" placeholder="0" min="0" step="1" inputmode="numeric">
+        </div>
+        <p class="ct-field-hint" id="budgetSuggest"></p>
+        <span class="ct-field-error" id="catBudgetError"></span>
+      </div>
+
+      <!-- Rollover toggle -->
+      <div class="ct-field ct-field--inline">
+        <div>
+          <span class="ct-field-label">Rollover unused budget</span>
+          <p class="ct-field-desc">Carry unspent money forward to next month</p>
+        </div>
+        <label class="ct-toggle" for="catRollover">
+          <input type="checkbox" id="catRollover" class="ct-toggle-input">
+          <span class="ct-toggle-track">
+            <span class="ct-toggle-thumb"></span>
+          </span>
+        </label>
+      </div>
+
+    </div>
+
+    <!-- Error banner -->
+    <div class="ct-error-banner" id="createErrorBanner" hidden>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span id="createErrorText">Something went wrong.</span>
+    </div>
+
+    <!-- Actions -->
+    <div class="ct-modal-actions">
+      <button class="ct-btn ct-btn--ghost" id="createModalCancel">Cancel</button>
+      <button class="ct-btn ct-btn--primary" id="createModalSave">
+        <span class="ct-btn-text" id="createBtnText">Create category</span>
+        <span class="ct-btn-loader" id="createBtnLoader" hidden>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="ct-spin"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+          Saving…
+        </span>
+      </button>
+    </div>
+    <input type="hidden" id="editCatId">
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     DELETE / MERGE MODAL
+════════════════════════════════════════════════════════════ -->
+<div class="ct-modal-backdrop" id="deleteModal" hidden>
+  <div class="ct-modal ct-modal--sm">
+    <div class="ct-delete-icon">🗂️</div>
+    <h3 class="ct-modal-title" style="text-align:center">Delete category?</h3>
+    <p class="ct-delete-sub" id="deleteSub">12 transactions totaling <strong id="deleteTotalAmt">₹0</strong> will be reassigned.</p>
+    <div class="ct-field" style="margin-top:12px">
+      <label class="ct-field-label" for="mergeTarget">Move transactions to</label>
+      <div class="ct-select-wrap">
+        <select class="ct-select" id="mergeTarget"></select>
+        <svg class="ct-select-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+    <div class="ct-modal-actions">
+      <button class="ct-btn ct-btn--ghost" id="deleteModalCancel">Cancel</button>
+      <button class="ct-btn ct-btn--danger" id="deleteModalConfirm">Delete &amp; Move</button>
+    </div>
+    <input type="hidden" id="deleteCatId">
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     AUTO-TAG RULE MODAL
+════════════════════════════════════════════════════════════ -->
+<div class="ct-modal-backdrop" id="ruleModal" hidden>
+  <div class="ct-modal ct-modal--sm">
+    <div class="ct-modal-header">
+      <div class="ct-modal-header-left">
+        <div class="ct-modal-icon-wrap">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
+        </div>
+        <div>
+          <h3 class="ct-modal-title">Auto-tag rule</h3>
+          <p class="ct-modal-sub">Automatically assign a category</p>
+        </div>
+      </div>
+      <button class="ct-modal-close" id="ruleModalClose">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="ct-modal-fields">
+      <div class="ct-field">
+        <label class="ct-field-label">If expense title contains</label>
+        <div class="ct-input-wrap">
+          <input type="text" id="ruleKeyword" class="ct-input" placeholder="e.g. Zomato, Netflix…" autocomplete="off">
+        </div>
+      </div>
+      <div class="ct-rule-or">— or —</div>
+      <div class="ct-field">
+        <label class="ct-field-label">If amount is exactly</label>
+        <div class="ct-input-wrap ct-budget-wrap">
+          <span class="ct-currency-prefix">₹</span>
+          <input type="number" id="ruleAmount" class="ct-input ct-budget-input" placeholder="0" min="0" step="1" inputmode="numeric">
+        </div>
+      </div>
+      <div class="ct-field">
+        <label class="ct-field-label">Assign to category <span class="ct-req">*</span></label>
+        <div class="ct-select-wrap">
+          <select class="ct-select" id="ruleCatTarget"></select>
+          <svg class="ct-select-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+    </div>
+    <div class="ct-modal-actions">
+      <button class="ct-btn ct-btn--ghost" id="ruleModalCancel">Cancel</button>
+      <button class="ct-btn ct-btn--primary" id="ruleModalSave">Save rule</button>
+    </div>
+  </div>
+</div>
+
+<!-- Flask data -->
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<script id="categories-data" type="application/json">{{ categories_json|tojson }}</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='categories.js') }}"></script>
+{% endblock %}

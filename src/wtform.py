@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField,SubmitField,EmailField,PasswordField,TelField,IntegerField,DateField,SelectField
-from wtforms.validators import Email,DataRequired,Regexp,Length
+from wtforms import StringField,SubmitField,EmailField,PasswordField,TelField,IntegerField,DateField,SelectField,BooleanField
+from wtforms.validators import Email,DataRequired,Regexp,Length,Optional
 from wtforms import StringField, FloatField, DateField, TextAreaField
 from wtforms.validators import DataRequired, NumberRange
 
@@ -39,3 +39,11 @@ class ExpenseForm(FlaskForm):
     category = StringField(validators=[DataRequired()])
     date = DateField(validators=[DataRequired()])
     note = TextAreaField()
+
+class CategoryForm(FlaskForm):
+    name     = StringField('Name', validators=[DataRequired(), Length(max=100)])
+    icon     = StringField('Icon', validators=[Optional(), Length(max=10)])
+    color    = StringField('Color', validators=[Optional(), Length(max=20)])
+    monthly_budget = FloatField('Monthly Budget', validators=[Optional(), NumberRange(min=0)])
+    rollover = BooleanField('Rollover', validators=[Optional()])
+    submit   = SubmitField('Save')

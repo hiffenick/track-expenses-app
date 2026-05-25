@@ -56,7 +56,7 @@
         <span class="nav-label">Analytics</span>
       </a>
 
-      <a href="" class="nav-item" data-page="categories">
+      <a href="{{ url_for('categ.categories') }}" class="nav-item" data-page="categories">
         <span class="nav-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
@@ -237,9 +237,9 @@
                       <span class="ae-cat-emoji">{{ cat.icon }}</span>
                       <span class="ae-cat-label">{{ cat.name }}</span>
 
-                      {% if cat.is_default == 0%}
+                      <!-- {% if cat.is_default == 0%}
                         <span class="ae-cat-delete">×</span>
-                      {% endif %}
+                      {% endif %} -->
                     </button>
                   {% endfor %}
 
@@ -474,5 +474,5 @@
 
 <!-- 
 <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>-->
-<script src="{{ url_for('static', filename='add_expense.js') }}"></script> 
+<script src="{{ url_for('static', filename='addexpense.js') }}"></script> 
 {% endblock %}

@@ -22,9 +22,10 @@ def show_addexpense():
 
     categories = Category.query.filter(
         or_(
-            Category.is_default == True,
-            Category.user_id == current_user.user_id
-        )
+            Category.user_id == current_user.user_id,
+            Category.is_default == True
+        ),
+        Category.name != "Uncategorized"
     ).all()
 
     return render_template(
@@ -75,38 +76,38 @@ def create_category():
     })
 
 
-@addexpense_route.route("/delete-category/<int:cat_id>", methods=["DELETE"])
-@login_required
-def delete_category(cat_id):
+# @addexpense_route.route("/delete-category/<int:cat_id>", methods=["DELETE"])
+# @login_required
+# def delete_category(cat_id):
 
-    category = Category.query.filter(
-        Category.category_id == cat_id,
-        or_(
-            Category.is_default == True,
-            Category.user_id == current_user.user_id
-        )
-    ).first()
+#     category = Category.query.filter(
+#         Category.category_id == cat_id,
+#         or_(
+#             Category.is_default == True,
+#             Category.user_id == current_user.user_id
+#         )
+#     ).first()
 
-    if not category:
-        return jsonify({
-            "success": False,
-            "message": "Invalid category"
-        }), 400
+#     if not category:
+#         return jsonify({
+#             "success": False,
+#             "message": "Invalid category"
+#         }), 400
 
-    if category.is_default:
-        return jsonify({
-            "success": False,
-            "message": "Default category cannot be deleted"
-        }), 403
+#     if category.is_default:
+#         return jsonify({
+#             "success": False,
+#             "message": "Default category cannot be deleted"
+#         }), 403
 
-    db.session.delete(category)
-    db.session.commit()
+#     db.session.delete(category)
+#     db.session.commit()
 
-    return jsonify({
-        "success": True,
-        "message": "Category deleted",
-        "id": cat_id
-    })
+#     return jsonify({
+#         "success": True,
+#         "message": "Category deleted",
+#         "id": cat_id
+#     })
 
 # =========================
 # POST → Handle Form Submit
