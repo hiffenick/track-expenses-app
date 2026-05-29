@@ -27,11 +27,9 @@ def serialize(e):
 @login_required
 def viewexps():
     categories = Category.query.filter(
-        or_(
-            Category.is_default == True,
-            Category.user_id == current_user.user_id
-        )
-    ).all()
+            Category.user_id == current_user.user_id,
+            Category.name != "Uncategorized"
+        ).all()
 
     all_expenses = Expense.query.filter_by( user_id=current_user.user_id ).order_by( desc(Expense.expense_date) ).all()
 

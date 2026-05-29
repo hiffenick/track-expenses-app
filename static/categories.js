@@ -532,12 +532,14 @@ function closeDeleteModal() {
 
 async function confirmDelete() {
   if (!deleteId) return;
-  const targetId = $('mergeTarget').value;
+  const rawTarget = $('mergeTarget').value;
+  const body = {};
+  if (rawTarget) body.reassign_to = parseInt(rawTarget, 10);
 
   try {
     await apiFetch(`/api/categories/${deleteId}`, {
       method: 'DELETE',
-      body: JSON.stringify({ reassign_to: targetId }),
+      body: JSON.stringify(body),
     });
     const cat = CATS.find(c => Number(c.id) === Number(deleteId));
     showToast(`🗑️ "${cat?.name}" deleted & transactions moved`);
@@ -589,6 +591,7 @@ function saveRulesLocal() {
 
 function renderRules() {
   const list = $('rulesList');
+  if (!list) return;
   list.innerHTML = '';
 
   if (!RULES.length) {

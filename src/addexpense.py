@@ -21,10 +21,7 @@ def show_addexpense():
     form = ExpenseForm()
 
     categories = Category.query.filter(
-        or_(
-            Category.user_id == current_user.user_id,
-            Category.is_default == True
-        ),
+        Category.user_id == current_user.user_id,
         Category.name != "Uncategorized"
     ).all()
 
@@ -147,12 +144,9 @@ def addexpense():
         note = form.note.data
 
         category = Category.query.filter(
-            Category.category_id == category_id,
-            or_(
-                Category.is_default == True,
-                Category.user_id == current_user.user_id
-            )
-        ).first()
+            Category.user_id == current_user.user_id,
+            Category.name != "Uncategorized"
+        ).all()
 
         if not category:
             return jsonify({
