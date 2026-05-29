@@ -1,0 +1,969 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
+
+<div class="dashboard-root">
+
+  <!-- ── Sidebar ─────────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <span class="brand-name">Expenso</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="{{ url_for('dashboard.dashboard') }}" class="nav-item" data-page="dashboard">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+          </svg>
+        </span>
+        <span class="nav-label">Dashboard</span>
+      </a>
+
+      <a href="{{ url_for('addexpense.addexpense') }}" class="nav-item" data-page="add-expense">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+          </svg>
+        </span>
+        <span class="nav-label">Add Expense</span>
+      </a>
+
+      <a href="{{ url_for('viewexp.viewexps') }}" class="nav-item" data-page="view-expenses">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+          </svg>
+        </span>
+        <span class="nav-label">View Expenses</span>
+      </a>
+
+      <a href="{{ url_for('analys.analytics') }}" class="nav-item" data-page="analytics">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/>
+            <line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/>
+          </svg>
+        </span>
+        <span class="nav-label">Analytics</span>
+      </a>
+
+      <a href="{{ url_for('categ.categories') }}" class="nav-item" data-page="categories">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+          </svg>
+        </span>
+        <span class="nav-label">Categories</span>
+      </a>
+
+      <div class="nav-divider"></div>
+
+      <a href="{{ url_for('profile.profile') }}" class="nav-item active" data-page="profile">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+          </svg>
+        </span>
+        <span class="nav-label">Profile &amp; Settings</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <div class="user-avatar"></div>
+        <div class="user-info">
+          <span class="user-name">{{ current_user.user_name if current_user else '' }}</span>
+          <span class="user-role">Personal Account</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Main Content ────────────────────────────────────────── -->
+  <main class="main-content">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="page-breadcrumb">
+          <span class="breadcrumb-section">Dashboard</span>
+          <span class="breadcrumb-sep">/</span>
+          <span class="breadcrumb-current">Profile &amp; Settings</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn" title="Search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </button>
+        <button class="icon-btn notif-btn" title="Notifications">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          <span class="notif-dot"></span>
+        </button>
+        <div class="topbar-avatar"></div>
+      </div>
+    </header>
+
+    <!-- Page Body -->
+    <div class="dashboard-body">
+
+      <!-- Page Header -->
+      <div class="ae-page-header" style="animation: fadeSlideUp 0.45s ease both;">
+        <div>
+          <p class="welcome-greeting">Account / Settings</p>
+          <h1 class="welcome-name">Profile &amp; Settings</h1>
+        </div>
+      </div>
+
+      <!-- ── Two-col layout ───────────────────────────────────── -->
+      <div class="ps-layout">
+
+        <!-- ── Settings Sub-Nav ─────────────────────────────── -->
+        <aside class="ps-subnav card">
+
+          <p class="ps-subnav-heading">Settings</p>
+
+          <nav class="ps-nav-list">
+
+            <a class="ps-nav-item ps-nav-item--active" href="#profile-section" data-target="profile-section">
+              <span class="ps-nav-iconwrap ps-nav-iconwrap--accent">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                </svg>
+              </span>
+              <span class="ps-nav-body">
+                <span class="ps-nav-label">Profile</span>
+                <span class="ps-nav-sub">Update your personal details</span>
+              </span>
+            </a>
+
+            <a class="ps-nav-item" href="#security-section" data-target="security-section">
+              <span class="ps-nav-iconwrap">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+              </span>
+              <span class="ps-nav-body">
+                <span class="ps-nav-label">Security</span>
+                <span class="ps-nav-sub">Password, 2FA &amp; sessions</span>
+              </span>
+            </a>
+
+            <a class="ps-nav-item" href="#preferences-section" data-target="preferences-section">
+              <span class="ps-nav-iconwrap">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="3"/>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+              </span>
+              <span class="ps-nav-body">
+                <span class="ps-nav-label">Preferences</span>
+                <span class="ps-nav-sub">Coming Soon...</span> <!-- App language, currency &amp; more -->
+              </span>
+            </a>
+
+            <a class="ps-nav-item" href="#privacy-section" data-target="privacy-section">
+              <span class="ps-nav-iconwrap">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+              </span>
+              <span class="ps-nav-body">
+                <span class="ps-nav-label">Privacy</span>
+                <span class="ps-nav-sub">Data, export &amp; delete account</span>
+              </span>
+            </a>
+
+            <a class="ps-nav-item" href="#notifications-section" data-target="notifications-section">
+              <span class="ps-nav-iconwrap">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                </svg>
+              </span>
+              <span class="ps-nav-body">
+                <span class="ps-nav-label">Notifications</span>
+                <span class="ps-nav-sub">Email &amp; push preferences</span>
+              </span>
+            </a>
+
+            <!-- <a class="ps-nav-item" href="#billing-section" data-target="billing-section">
+              <span class="ps-nav-iconwrap">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="1" y="4" width="22" height="16" rx="2"/>
+                  <line x1="1" y1="10" x2="23" y2="10"/>
+                </svg>
+              </span>
+              <span class="ps-nav-body">
+                <span class="ps-nav-label">Billing</span>
+                <span class="ps-nav-sub">Subscription &amp; payment</span>
+              </span>
+            </a> -->
+
+            <!-- <a class="ps-nav-item" href="#sessions-section" data-target="sessions-section">
+              <span class="ps-nav-iconwrap">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="3" width="20" height="14" rx="2"/>
+                  <line x1="8" y1="21" x2="16" y2="21"/>
+                  <line x1="12" y1="17" x2="12" y2="21"/>
+                </svg>
+              </span>
+              <span class="ps-nav-body">
+                <span class="ps-nav-label">Sessions</span>
+                <span class="ps-nav-sub">Manage active sessions</span>
+              </span>
+            </a> -->
+
+          </nav>
+
+          <!-- Help footer -->
+          <div class="ps-nav-help">
+            <div class="ps-nav-help-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+            </div>
+            <div>
+              <p class="ps-nav-help-title">Need help?</p>
+              <a href="#" class="ps-nav-help-link">Visit our help center →</a>
+            </div>
+          </div>
+
+        </aside>
+
+        <!-- ── Right Content ────────────────────────────────── -->
+        <div class="ps-content">
+
+          <!-- ════════════════════════════════════════════════
+               CARD 1 — Profile Information
+          ════════════════════════════════════════════════════ -->
+          <div class="card ps-card" id="profile-section">
+
+            <div class="ps-card-header">
+              <div class="ae-card-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                </svg>
+              </div>
+              <div class="ps-card-header-text">
+                <h2 class="ps-card-title">Profile Information</h2>
+                <p class="ps-card-subtitle">Update your personal details and how others see you.</p>
+              </div>
+            </div>
+
+            <div class="ps-card-body">
+              <form 
+                method="POST" 
+                action="{{ url_for('profile.update_profile') }}" 
+                enctype="multipart/form-data" 
+                id="profileForm"
+              >
+
+                <!-- CSRF TOKEN -->
+                <input
+                  type="hidden"
+                  name="csrf_token"
+                  value="{{ csrf_token() }}"
+                >
+
+                <div class="ps-profile-row">
+
+                  <!-- Avatar column -->
+                  <div class="ps-avatar-col">
+
+                    <span class="ae-label">
+                      Profile Photo
+                    </span>
+
+                    <div class="ps-avatar-wrap">
+
+                      <div class="ps-avatar" id="avatarRing">
+
+                        <div class="ps-avatar-inner" id="avatarPreview">
+
+                          <span class="ps-avatar-initial" id="avatarInitial">
+                            {{ current_user.user_name[0].upper() if current_user else 'U' }}
+                          </span>
+
+                        </div>
+                      </div>
+
+                      <label 
+                        class="ps-avatar-cam" 
+                        for="avatarInput" 
+                        title="Change photo"
+                      >
+
+                        <svg 
+                          width="13" 
+                          height="13" 
+                          viewBox="0 0 24 24" 
+                          fill="none" 
+                          stroke="currentColor" 
+                          stroke-width="2.5"
+                        >
+                          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                          <circle cx="12" cy="13" r="4"/>
+                        </svg>
+
+                      </label>
+
+                      <input
+                        type="file"
+                        id="avatarInput"
+                        name="avatar"
+                        accept="image/*"
+                        style="display:none"
+                      >
+
+                    </div>
+
+                    <p class="ps-avatar-hint">
+                      JPG, PNG or GIF. Max 2 MB.
+                    </p>
+
+                  </div>
+
+                  <!-- Fields column -->
+                  <div class="ps-fields-col">
+
+                    <!-- USERNAME -->
+                    <div class="ae-field">
+
+                      <label class="ae-label" for="fullname">
+                        Username
+                      </label>
+
+                      <div class="ae-input-wrap">
+
+                        <span class="ae-input-icon">
+
+                          <svg 
+                            width="15" 
+                            height="15" 
+                            viewBox="0 0 24 24" 
+                            fill="none" 
+                            stroke="currentColor" 
+                            stroke-width="2"
+                          >
+                            <circle cx="12" cy="8" r="4"/>
+                            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                          </svg>
+
+                        </span>
+
+                        <input
+                          type="text"
+                          id="fullname"
+                          name="username"
+                          class="ae-input"
+                          value="{{ current_user.user_name if current_user else '' }}"
+                          placeholder="Your full name"
+                          autocomplete="off"
+                          required
+                        >
+
+                      </div>
+
+                    </div>
+
+                    <!-- EMAIL -->
+                    <div class="ae-field">
+
+                      <label class="ae-label" for="email">
+                        Email Address
+                      </label>
+
+                      <div class="ae-input-wrap">
+
+                        <span class="ae-input-icon">
+
+                          <svg 
+                            width="15" 
+                            height="15" 
+                            viewBox="0 0 24 24" 
+                            fill="none" 
+                            stroke="currentColor" 
+                            stroke-width="2"
+                          >
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            <polyline points="22,6 12,13 2,6"/>
+                          </svg>
+
+                        </span>
+
+                        <input
+                          type="email"
+                          id="email"
+                          name="email"
+                          class="ae-input"
+                          value="{{ current_user.user_mail if current_user else '' }}"
+                          placeholder="your@email.com"
+                          autocomplete="off"
+                          required
+                          readonly
+                        >
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+                <!-- ACTIONS -->
+                <div class="ps-form-actions">
+
+                  <button 
+                    type="reset" 
+                    class="ae-btn ae-btn-ghost"
+                  >
+                    Reset
+                  </button>
+
+                  <button 
+                    type="submit" 
+                    class="ae-btn ae-btn-primary"
+                  >
+
+                    <span class="ae-btn-text">
+                      Save changes
+                    </span>
+
+                    <span class="ae-btn-loader" hidden>
+
+                      <svg 
+                        width="14" 
+                        height="14" 
+                        viewBox="0 0 24 24" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        stroke-width="2.5" 
+                        class="ae-spin"
+                      >
+                        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                      </svg>
+
+                      Saving…
+
+                    </span>
+
+                  </button>
+
+                </div>
+
+              </form>
+            </div>
+
+          </div><!-- /profile card -->
+
+
+          <!-- ════════════════════════════════════════════════
+               CARD 2 — Security Overview
+          ════════════════════════════════════════════════════ -->
+          <div class="card ps-card" id="security-section">
+
+            <div class="ps-card-header">
+              <div class="ae-card-icon" style="background:rgba(139,92,246,0.12);border-color:rgba(139,92,246,0.22);color:#a78bfa;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+              </div>
+              <div class="ps-card-header-text">
+                <h2 class="ps-card-title">Security Overview</h2>
+                <p class="ps-card-subtitle">Keep your account secure and protected.</p>
+              </div>
+            </div>
+
+            <div class="ps-card-body">
+              <div class="ps-sec-grid">
+
+                <!-- Password -->
+                <div class="ps-sec-tile">
+                  <div class="ps-sec-tile-icon" style="background:rgba(78,201,176,0.1);border-color:rgba(78,201,176,0.2);color:var(--teal);">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="11" width="18" height="11" rx="2"/>
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                  </div>
+                  <div class="ps-sec-tile-body">
+                    <span class="ps-sec-tile-title">Password</span>
+                    <span class="ps-sec-tile-meta">Last changed</span>
+                    <span class="ps-sec-tile-meta">2 months ago</span>
+                  </div>
+                  <div class="ps-sec-badge ps-sec-badge--ok">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    Secure
+                  </div>
+                </div>
+
+                <!-- 2FA -->
+                <div class="ps-sec-tile">
+                  <div class="ps-sec-tile-icon" style="background:rgba(139,92,246,0.1);border-color:rgba(139,92,246,0.2);color:#a78bfa;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="5" y="2" width="14" height="20" rx="2"/>
+                      <line x1="12" y1="18" x2="12.01" y2="18"/>
+                    </svg>
+                  </div>
+                  <div class="ps-sec-tile-body">
+                    <span class="ps-sec-tile-title">Two-Factor Auth</span>
+                    <span class="ps-sec-tile-meta">Not enabled</span>
+                  </div>
+                  <button class="ae-btn ae-btn-ghost ps-sec-action-btn">Enable</button>
+                </div>
+
+                <!-- Sessions -->
+                <div class="ps-sec-tile">
+                  <div class="ps-sec-tile-icon" style="background:rgba(96,165,250,0.1);border-color:rgba(96,165,250,0.2);color:#60a5fa;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                    </svg>
+                  </div>
+                  <div class="ps-sec-tile-body">
+                    <span class="ps-sec-tile-title">Active Sessions</span>
+                    <span class="ps-sec-tile-meta">2 active sessions</span>
+                  </div>
+                  <button class="ae-btn ae-btn-ghost ps-sec-action-btn">View sessions</button>
+                </div>
+
+                <!-- Account Status -->
+                <div class="ps-sec-tile">
+                  <div class="ps-sec-tile-icon" style="background:rgba(78,201,176,0.1);border-color:rgba(78,201,176,0.2);color:var(--teal);">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                  </div>
+                  <div class="ps-sec-tile-body">
+                    <span class="ps-sec-tile-title">Account Status</span>
+                    <span class="ps-sec-tile-meta">All good</span>
+                  </div>
+                  <div class="ps-sec-badge ps-sec-badge--ok">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    Verified
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div><!-- /security card -->
+
+
+          <!-- ════════════════════════════════════════════════
+               CARD 3 — Quick Actions
+          ════════════════════════════════════════════════════ -->
+          <div class="card ps-card" id="privacy-section">
+
+            <div class="ps-card-header">
+              <div class="ae-card-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="3"/>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+              </div>
+              <div class="ps-card-header-text">
+                <h2 class="ps-card-title">Quick Actions</h2>
+                <p class="ps-card-subtitle">Manage your account and data.</p>
+              </div>
+            </div>
+
+            <div class="ps-card-body ps-card-body--no-pad-top">
+              <div class="ps-actions-list">
+
+                <a
+                  href="#"
+                  class="ps-action-row"
+                  id="openOtpFlowBtn"
+                >
+                  <div class="ps-action-iconwrap">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="11" width="18" height="11" rx="2"/>
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                  </div>
+                  <div class="ps-action-body change-password-trigger">
+                    <span class="ps-action-title">Change Password</span>
+                    <span class="ps-action-sub">Update your account password</span>
+                  </div>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="ps-action-chevron">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </a>
+
+                <!-- <a href="#" class="ps-action-row">
+                  <div class="ps-action-iconwrap">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                      <polyline points="7 10 12 15 17 10"/>
+                      <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                  </div>
+                  <div class="ps-action-body">
+                    <span class="ps-action-title">Download My Data</span>
+                    <span class="ps-action-sub">Export your account data</span>
+                  </div>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="ps-action-chevron">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </a> -->
+
+                <a href="#" class="ps-action-row ps-action-row--danger">
+                  <div class="ps-action-iconwrap ps-action-iconwrap--danger">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6"/>
+                      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                      <path d="M10 11v6M14 11v6"/>
+                      <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                    </svg>
+                  </div>
+                  <div class="ps-action-body">
+                    <span class="ps-action-title ps-action-title--danger">Delete Account</span>
+                    <span class="ps-action-sub">Permanently delete your account</span>
+                  </div>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="ps-action-chevron ps-action-chevron--danger">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </a>
+
+              </div>
+            </div>
+
+          </div><!-- /quick actions card -->
+
+        </div><!-- /ps-content -->
+      </div><!-- /ps-layout -->
+
+    </div><!-- /dashboard-body -->
+  </main>
+
+</div><!-- /dashboard-root -->
+
+<!-- Sidebar overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+
+
+<!-- ============================= -->
+<!-- EMAIL OTP VERIFICATION MODAL -->
+<!-- ============================= -->
+
+<div class="ps-modal-overlay" id="otpModalOverlay">
+
+  <div class="ps-modal-card otp-modal">
+
+    <!-- HEADER -->
+    <div class="ps-modal-header">
+
+      <div class="ps-modal-icon otp-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4
+          c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+          <polyline points="22,6 12,13 2,6"/>
+        </svg>
+      </div>
+
+      <div>
+        <h3 class="ps-modal-title">
+          Verify Email Change
+        </h3>
+
+        <p class="ps-modal-subtitle">
+          We sent a verification code to your email.
+        </p>
+      </div>
+
+      <button class="ps-modal-close" id="closeOtpModal">
+        ✕
+      </button>
+
+    </div>
+
+    <!-- BODY  -->
+    <form method="POST"
+      action="{{url_for('profile.verify_password_otp')}}"
+      class="ps-modal-form"
+      id="otpVerifyForm"
+      >
+      
+
+      {{ otp_form.hidden_tag() }}
+
+      <div class="otp-input-group">
+
+        <input type="text" maxlength="1" class="otp-input">
+        <input type="text" maxlength="1" class="otp-input">
+        <input type="text" maxlength="1" class="otp-input">
+        <input type="text" maxlength="1" class="otp-input">
+        <input type="text" maxlength="1" class="otp-input">
+        <input type="text" maxlength="1" class="otp-input">
+
+      </div>
+
+      {{ otp_form.otp(id="finalOtpInput", type="hidden") }}
+
+      <div class="otp-meta">
+              <div class="otp-status" id="otpStatusText">
+        Waiting...
+      </div>
+
+      <div class="otp-timer" id="otpTimer">
+        02:00
+      </div>
+
+        <!-- <span class="otp-mail-text">
+          Sent securely via email
+        </span> -->
+
+        <button type="button" class="otp-resend-btn">
+          Resend Code
+        </button>
+
+      </div>
+
+      <button type="submit" class="ae-btn ae-btn-primary otp-submit-btn">
+        Verify Code
+        </button>
+        <div id="otpErrorBanner" style="display:none;" class="ps-error-banner">
+    <span id="otpErrorText"></span>
+</div>
+    </form>
+
+  </div>
+
+</div>
+
+<!-- ======================== -->
+<!-- CHANGE PASSWORD MODAL -->
+<!-- ======================== -->
+
+<div class="ps-modal-overlay" id="passwordModalOverlay">
+
+  <div class="ps-modal-card password-modal">
+
+    <!-- HEADER -->
+    <div class="ps-modal-header">
+
+      <div class="ps-modal-icon pass-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="11" width="18" height="11"
+            rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+      </div>
+
+      <div>
+        <h3 class="ps-modal-title">
+          Change Password
+        </h3>
+
+        <p class="ps-modal-subtitle">
+          Update your account password securely.
+        </p>
+      </div>
+
+      <button class="ps-modal-close" id="closePasswordModal">
+        ✕
+      </button>
+
+    </div>
+
+    <!-- FORM  -->
+    <form method="POST"
+      action="{{ url_for('profile.change_password')}}"
+      class="ps-modal-form">
+
+      {{ password_form.hidden_tag() }}
+
+      <!-- CURRENT PASSWORD -->
+      <div class="ae-field">
+
+        <label class="ae-label">
+          Current Password
+        </label>
+
+        <div class="ae-input-wrap">
+
+          <input
+            type="password"
+            name="current_password"
+            class="ae-input"
+            placeholder="Enter current password"
+            required
+          >
+
+        </div>
+
+      </div>
+
+      <!-- NEW PASSWORD -->
+      <div class="ae-field">
+
+        <label class="ae-label">
+          New Password
+        </label>
+
+        <div class="ae-input-wrap">
+
+          <input
+            type="password"
+            name="new_password"
+            class="ae-input"
+            placeholder="Enter new password"
+            required
+          >
+
+        </div>
+
+      </div>
+
+      <!-- CONFIRM PASSWORD -->
+      <div class="ae-field">
+
+        <label class="ae-label">
+          Confirm Password
+        </label>
+
+        <div class="ae-input-wrap">
+
+          <input
+            type="password"
+            name="confirm_password"
+            class="ae-input"
+            placeholder="Confirm new password"
+            required
+          >
+
+        </div>
+
+      </div>
+
+      <button type="submit"
+        class="ae-btn ae-btn-primary otp-submit-btn">
+
+        Change Password
+
+      </button>
+
+    </form>
+
+  </div>
+
+</div>
+
+<div class="ps-modal-overlay" id="deletePasswordModal">
+
+  <div class="ps-modal-card">
+
+    <!-- HEADER -->
+    <div class="ps-modal-header">
+
+      <div class="ps-modal-icon" style="background:rgba(239,68,68,0.12);color:#ef4444;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+
+      <div>
+        <h3 class="ps-modal-title">Confirm Deletion</h3>
+        <p class="ps-modal-subtitle">Enter your password to continue</p>
+      </div>
+
+      <button class="ps-modal-close" id="closeDeletePasswordModal">✕</button>
+
+    </div>
+
+    <!-- BODY -->
+    <div class="ps-modal-form">
+
+      <form id="deletePasswordForm" method="POST">
+
+        {{ delete_form.hidden_tag() }}
+
+        <div class="ae-field">
+          <label class="ae-label">Current Password</label>
+
+          <div class="ae-input-wrap">
+            {{ delete_form.password(class_="ae-input", placeholder="Enter password") }}
+          </div>
+        </div>
+
+        <!-- <button type="submit" class="ae-btn ae-btn-primary">
+          Send OTP
+        </button> -->
+        <div id="deleteErrorBanner" style="display:none;" class="ps-error-banner">
+    <span id="deleteErrorText"></span>
+</div>
+
+  <button type="submit" class="ae-btn ae-btn-primary">
+      Send OTP
+  </button>
+      </form>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+
+        showToast("{{ message }}", "{{ category }}");
+
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+</script>
+
+<!-- Toast -->
+<div class="toast" id="navToast"></div>
+
+<script src="{{ url_for('static', filename='profile.js') }}"></script>
+
+<form
+  method="POST"
+  action="{{ url_for('profile.send_password_otp') }}"
+  id="sendOtpForm"
+  style="display:none;"
+>
+
+  <input
+    type="hidden"
+    name="csrf_token"
+    value="{{ csrf_token() }}"
+  >
+
+</form>
+
+{% endblock %}

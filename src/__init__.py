@@ -22,6 +22,7 @@ from src.viewexpense import view_expenses_route
 from src.categories import categories_route
 from src.greeting import greeting_route
 from src.extensions import mail
+from src.profile import profile_route
 from src.analytics import analytics_route
 from src.extensions import loginmanager
 from src.dashboard import dashboard_route
@@ -55,5 +56,6 @@ def createapp():
     app.register_blueprint(analytics_route)
     app.register_blueprint(categories_route)
     app.register_blueprint(view_expenses_route)
+    app.register_blueprint(profile_route)
 
     return app  

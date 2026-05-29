@@ -1,7 +1,7 @@
 import random
 from flask import Blueprint,render_template,request,redirect,url_for,session
 from flask_mail import Message
-from src.extensions import loginmanager
+from src.extensions import loginmanager,mail
 from flask_login import login_user,current_user
 from werkzeug.security import check_password_hash
 from src.extensions import bcrypt
@@ -35,11 +35,24 @@ def login():
             session['otp-verified'] = False
 
             #Send Otp Main
-            msg = Message('Your OTP Code' , recipients=[user.user_mail])
-            msg.body = f'Your OTP for ExpenseInsight Login is : {otp}'
-            from src.extensions import mail
+            msg = Message(
+                subject="Your Expense Tracker OTP",
+                recipients=[user.user_mail]
+            )
+
+            msg.body = f"""
+            Hello {user.user_name},
+
+            Your OTP is: {otp}
+
+            Do not share this OTP with anyone.
+
+            - Expense Tracker
+            """
+
             mail.send(msg)
-            print('mail sent')
+
+            print("OTP SENT:", otp)
             return redirect(url_for('verify.verify'))
 
     return render_template('login.html',form = form)

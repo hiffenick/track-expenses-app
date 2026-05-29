@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField,SubmitField,EmailField,PasswordField,TelField,IntegerField,DateField,SelectField,BooleanField
-from wtforms.validators import Email,DataRequired,Regexp,Length,Optional
+from wtforms import StringField,SubmitField,EmailField,FileField,PasswordField,TelField,IntegerField,DateField,SelectField,BooleanField
+from wtforms.validators import Email,DataRequired,Regexp,Length,Optional,EqualTo
 from wtforms import StringField, FloatField, DateField, TextAreaField
+# from flask_wtf.file import FileAllowed
 from wtforms.validators import DataRequired, NumberRange
 
 class Signup(FlaskForm):
@@ -47,3 +48,113 @@ class CategoryForm(FlaskForm):
     monthly_budget = FloatField('Monthly Budget', validators=[Optional(), NumberRange(min=0)])
     rollover = BooleanField('Rollover', validators=[Optional()])
     submit   = SubmitField('Save')
+
+
+class ProfileForm(FlaskForm):
+    username = StringField('Username',validators=[DataRequired(),Length(min=3, max=30)])
+    email = EmailField('Email',validators=[DataRequired(),Email()])
+    # avatar = FileField('Profile Photo',validators=[FileAllowed(['jpg', 'jpeg', 'png', 'gif'],'Images only!')])
+    submit = SubmitField('Save Changes')
+
+
+# =========================
+# EMAIL OTP FORM
+# =========================
+
+class EmailOTPForm(FlaskForm):
+
+    otp = StringField(
+
+        'OTP',
+
+        validators=[
+
+            DataRequired(
+                message='OTP is required.'
+            ),
+
+            Length(
+                min=6,
+                max=6,
+                message='OTP must be 6 digits.'
+            )
+
+        ]
+
+    )
+
+    submit = SubmitField(
+        'Verify Code'
+    )
+
+
+# =========================
+# CHANGE PASSWORD FORM
+# =========================
+
+class ChangePasswordForm(FlaskForm):
+
+    current_password = PasswordField(
+
+        'Current Password',
+
+        validators=[
+
+            DataRequired(
+                message='Current password is required.'
+            )
+
+        ]
+
+    )
+
+    new_password = PasswordField(
+
+        'New Password',
+
+        validators=[
+
+            DataRequired(
+                message='New password is required.'
+            ),
+
+            Length(
+                min=8,
+                max=64,
+                message='Password must be at least 8 characters.'
+            )
+
+        ]
+
+    )
+
+    confirm_password = PasswordField(
+
+        'Confirm Password',
+
+        validators=[
+
+            DataRequired(
+                message='Please confirm your password.'
+            ),
+
+            EqualTo(
+                'new_password',
+                message='Passwords must match.'
+            )
+
+        ]
+
+    )
+
+    submit = SubmitField(
+        'Change Password'
+    )
+
+class DeleteAccountForm(FlaskForm):
+    password = PasswordField(
+        'Current Password',
+        validators=[DataRequired()]
+    )
+
+    submit = SubmitField('Send OTP')
