@@ -1,37 +1,208 @@
 {% extends 'base.html' %}
 {% block content %}
-<section class="container py-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <h2 class="mb-4 text-center">Create an Account</h2>
-      <form method="POST" action="{{ url_for('signup.signup') }}">
-  {{ form.hidden_tag() }}
 
-  <div class="mb-3">
-    {{ form.email.label(class="form-label") }}
-    {{ form.email(class="form-control") }}
-  </div>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='signup.css') }}">
 
-  <div class="mb-3">
-    {{ form.username.label(class="form-label") }}
-    {{ form.username(class="form-control") }}
-  </div>
+<div class="su-root">
 
-  <div class="mb-3">
-    {{ form.phonenumber.label(class="form-label") }}
-    {{ form.phonenumber(class="form-control") }}
-  </div>
+  <!-- ── Left panel — branding ──────────────────────────────── -->
+  <div class="su-panel su-panel--left">
 
-  <div class="mb-3">
-    {{ form.password.label(class="form-label") }}
-    {{ form.password(class="form-control") }}
-  </div>
+    <!-- ambient blobs -->
+    <div class="su-blob su-blob--1"></div>
+    <div class="su-blob su-blob--2"></div>
+    <div class="su-grid-overlay"></div>
 
-  <button type="submit" class="btn btn-primary w-100">Sign Up</button>
-</form>
+    <div class="su-left-inner">
 
-      <p class="text-center mt-3 small">Already have an account? <a href="/login">Login</a></p>
+      <!-- brand -->
+      <a href="{{ url_for('home.home') }}" class="su-brand">
+        <div class="su-brand-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+            <path d="M2 17l10 5 10-5"/>
+            <path d="M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <span class="su-brand-name">Expenso</span>
+      </a>
+
+      <!-- headline -->
+      <div class="su-left-copy">
+        <p class="su-left-eyebrow">New account</p>
+        <h1 class="su-left-title">Your financial<br><em>clarity starts</em><br>here.</h1>
+        <p class="su-left-sub">Track every rupee. Build streaks. Understand your spending like never before.</p>
+      </div>
+
+      <!-- feature bullets -->
+      <div class="su-bullets">
+        <div class="su-bullet">
+          <span class="su-bullet-icon su-bullet-icon--amber">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          <span>Free forever for personal use</span>
+        </div>
+        <div class="su-bullet">
+          <span class="su-bullet-icon su-bullet-icon--teal">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          <span>Analytics, streaks &amp; regret scoring</span>
+        </div>
+        <div class="su-bullet">
+          <span class="su-bullet-icon su-bullet-icon--purple">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          <span>Your data stays private, always</span>
+        </div>
+      </div>
+
+      <!-- floating stat card -->
+      <div class="su-stat-card">
+        <span class="su-sc-label">No-spend streak</span>
+        <span class="su-sc-value">6 <span class="su-sc-unit">days 🔥</span></span>
+        <span class="su-sc-delta">Keep it going — best: 12</span>
+      </div>
+
     </div>
   </div>
-</section>
+
+  <!-- ── Right panel — form ─────────────────────────────────── -->
+  <div class="su-panel su-panel--right">
+    <div class="su-form-wrap">
+
+      <!-- mobile brand (shown only on small screens) -->
+      <a href="{{ url_for('home.home') }}" class="su-brand su-brand--mobile">
+        <div class="su-brand-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+            <path d="M2 17l10 5 10-5"/>
+            <path d="M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <span class="su-brand-name">Expenso</span>
+      </a>
+
+      <div class="su-form-header">
+        <p class="su-form-eyebrow">Step 1 of 1</p>
+        <h2 class="su-form-title">Create your account</h2>
+        <p class="su-form-sub">Takes less than a minute.</p>
+      </div>
+
+      <!-- Flask-WTF form -->
+      <form method="POST" action="{{ url_for('signup.signup') }}" class="su-form" id="signupForm" novalidate>
+        {{ form.hidden_tag() }}
+
+        <!-- Email -->
+        <div class="su-field" id="field-email">
+          <label class="su-label" for="{{ form.email.id }}">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
+            Email address
+          </label>
+          <div class="su-input-wrap">
+            {{ form.email(class="su-input", placeholder="you@example.com", autocomplete="email") }}
+            <span class="su-input-check" aria-hidden="true">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
+          </div>
+          {% if form.email.errors %}
+            {% for error in form.email.errors %}
+              <span class="su-field-error">{{ error }}</span>
+            {% endfor %}
+          {% endif %}
+          <span class="su-field-error su-field-error--js" id="err-email"></span>
+        </div>
+
+        <!-- Username -->
+        <div class="su-field" id="field-username">
+          <label class="su-label" for="{{ form.username.id }}">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            Username
+          </label>
+          <div class="su-input-wrap">
+            {{ form.username(class="su-input", placeholder="e.g. ananya52", autocomplete="username") }}
+            <span class="su-input-check" aria-hidden="true">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
+          </div>
+          {% if form.username.errors %}
+            {% for error in form.username.errors %}
+              <span class="su-field-error">{{ error }}</span>
+            {% endfor %}
+          {% endif %}
+          <span class="su-field-error su-field-error--js" id="err-username"></span>
+        </div>
+
+        <!-- Phone -->
+        <div class="su-field" id="field-phone">
+          <label class="su-label" for="{{ form.phonenumber.id }}">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
+            Phone number
+          </label>
+          <div class="su-input-wrap su-input-wrap--phone">
+            <span class="su-phone-prefix">+91</span>
+            {{ form.phonenumber(class="su-input su-input--prefixed", placeholder="98765 43210", autocomplete="tel") }}
+            <span class="su-input-check" aria-hidden="true">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
+          </div>
+          {% if form.phonenumber.errors %}
+            {% for error in form.phonenumber.errors %}
+              <span class="su-field-error">{{ error }}</span>
+            {% endfor %}
+          {% endif %}
+          <span class="su-field-error su-field-error--js" id="err-phone"></span>
+        </div>
+
+        <!-- Password -->
+        <div class="su-field" id="field-password">
+          <label class="su-label" for="{{ form.password.id }}">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            Password
+          </label>
+          <div class="su-input-wrap">
+            {{ form.password(class="su-input su-input--pw", placeholder="Min. 8 characters", autocomplete="new-password", id="pwInput") }}
+            <button type="button" class="su-pw-toggle" id="pwToggle" tabindex="-1" aria-label="Toggle password">
+              <svg class="su-eye-open" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="su-eye-closed" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
+
+          <!-- strength bar -->
+          <div class="su-pw-strength" id="pwStrength">
+            <div class="su-pw-bar">
+              <div class="su-pw-fill" id="pwFill"></div>
+            </div>
+            <span class="su-pw-label" id="pwLabel"></span>
+          </div>
+
+          {% if form.password.errors %}
+            {% for error in form.password.errors %}
+              <span class="su-field-error">{{ error }}</span>
+            {% endfor %}
+          {% endif %}
+          <span class="su-field-error su-field-error--js" id="err-password"></span>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="su-submit" id="submitBtn">
+          <span class="su-submit-text">Create account</span>
+          <span class="su-submit-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </button>
+
+      </form>
+
+      <p class="su-login-link">
+        Already have an account?
+        <a href="{{ url_for('login.login') }}" class="su-login-anchor">Log in</a>
+      </p>
+
+    </div>
+  </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='signup.js') }}"></script>
 {% endblock %}

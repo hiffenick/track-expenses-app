@@ -1,44 +1,170 @@
 {% extends 'base.html' %}
 {% block content %}
-<section class="container py-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <h2 class="mb-4 text-center">Welcome Back</h2>
-      <form method="post" action="{{url_for('login.login')}}">
 
-        {{ form.csrf_token }}
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
 
+<div class="li-root">
 
-        <div class="mb-3">
-          {{ form.email.label(class="form-label")}}
-          {{ form.email(class="form-control")}}
-          <!-- <label for="email" class="form-label">Email address</label>
-          <input type="email" class="form-control" id="email" required> -->
+  <!-- ── Left panel — branding ──────────────────────────────── -->
+  <div class="li-panel li-panel--left">
+
+    <!-- ambient blobs -->
+    <div class="li-blob li-blob--1"></div>
+    <div class="li-blob li-blob--2"></div>
+    <div class="li-blob li-blob--3"></div>
+    <div class="li-grid-overlay"></div>
+
+    <div class="li-left-inner">
+
+      <!-- brand -->
+      <a href="{{ url_for('home.home') }}" class="li-brand">
+        <div class="li-brand-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+            <path d="M2 17l10 5 10-5"/>
+            <path d="M2 12l10 5 10-5"/>
+          </svg>
         </div>
-        <div class="mb-3">
-          {{ form.password.label(class="form-label")}}
-          {{ form.password(class="form-control")}}
-          <!-- <label for="password" class="form-label">Password</label>
-          <input type="password" class="form-control" id="password" required> -->
+        <span class="li-brand-name">Expenso</span>
+      </a>
+
+      <!-- headline -->
+      <div class="li-left-copy">
+        <p class="li-left-eyebrow">Welcome back</p>
+        <h1 class="li-left-title">Good to see<br>you <em>again.</em></h1>
+        <p class="li-left-sub">Your spending data, streaks, and insights are right where you left them.</p>
+      </div>
+
+      <!-- stat cards stacked -->
+      <div class="li-stats">
+
+        <div class="li-stat-card li-stat-card--main">
+          <span class="li-sc-label">This month's spend</span>
+          <span class="li-sc-value">₹12,480 <span class="li-sc-unit">/ ₹18k</span></span>
+          <div class="li-sc-bar">
+            <div class="li-sc-bar-fill" style="width: 69%"></div>
+          </div>
+          <span class="li-sc-delta li-sc-delta--good">↓ 8% vs last month</span>
         </div>
-        <button type="submit" class="btn btn-primary w-100">Login</button>
-      </form>
-      <p class="text-center mt-3 small">New here? <a href="/signup">Create an account</a></p>
+
+        <div class="li-stat-card li-stat-card--mini">
+          <span class="li-sc-label">No-spend streak</span>
+          <span class="li-sc-value-sm">6 <span class="li-sc-unit">days 🔥</span></span>
+          <span class="li-sc-delta li-sc-delta--teal">Best: 12 days</span>
+        </div>
+
+      </div>
+
     </div>
   </div>
-</section>
+
+  <!-- ── Right panel — form ─────────────────────────────────── -->
+  <div class="li-panel li-panel--right">
+    <div class="li-form-wrap">
+
+      <!-- mobile brand (shown only on small screens) -->
+      <a href="{{ url_for('home.home') }}" class="li-brand li-brand--mobile">
+        <div class="li-brand-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+            <path d="M2 17l10 5 10-5"/>
+            <path d="M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <span class="li-brand-name">Expenso</span>
+      </a>
+
+      <div class="li-form-header">
+        <p class="li-form-eyebrow">Sign in</p>
+        <h2 class="li-form-title">Log in to your account</h2>
+        <p class="li-form-sub">Enter your credentials to continue.</p>
+      </div>
+
+      <!-- Flask-WTF form -->
+      <form method="POST" action="{{ url_for('login.login') }}" class="li-form" id="loginForm" novalidate>
+        {{ form.csrf_token }}
+
+        <!-- Email -->
+        <div class="li-field" id="field-email">
+          <label class="li-label" for="{{ form.email.id }}">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
+            Email address
+          </label>
+          <div class="li-input-wrap">
+            {{ form.email(class="li-input", placeholder="you@example.com", autocomplete="email") }}
+            <span class="li-input-check" aria-hidden="true">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
+          </div>
+          {% if form.email.errors %}
+            {% for error in form.email.errors %}
+              <span class="li-field-error">{{ error }}</span>
+            {% endfor %}
+          {% endif %}
+          <span class="li-field-error li-field-error--js" id="err-email"></span>
+        </div>
+
+        <!-- Password -->
+        <div class="li-field" id="field-password">
+          <div class="li-label-row">
+            <label class="li-label" for="{{ form.password.id }}">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+              Password
+            </label>
+            <a href="#" class="li-forgot">Forgot password?</a>
+          </div>
+          <div class="li-input-wrap">
+            {{ form.password(class="li-input li-input--pw", placeholder="Your password", autocomplete="current-password", id="pwInput") }}
+            <button type="button" class="li-pw-toggle" id="pwToggle" tabindex="-1" aria-label="Toggle password">
+              <svg class="li-eye-open" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="li-eye-closed" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
+          {% if form.password.errors %}
+            {% for error in form.password.errors %}
+              <span class="li-field-error">{{ error }}</span>
+            {% endfor %}
+          {% endif %}
+          <span class="li-field-error li-field-error--js" id="err-password"></span>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="li-submit" id="submitBtn">
+          <span class="li-submit-text">Log in</span>
+          <span class="li-submit-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </button>
+
+      </form>
+
+      <!-- divider -->
+      <div class="li-divider">
+        <span class="li-divider-line"></span>
+        <span class="li-divider-text">or</span>
+        <span class="li-divider-line"></span>
+      </div>
+
+      <!-- guest / signup link -->
+      <p class="li-signup-link">
+        New to Expenso?
+        <a href="{{ url_for('signup.signup') }}" class="li-signup-anchor">Create a free account</a>
+      </p>
+
+    </div>
+  </div>
+
+</div>
 
 <script>
-
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
       {% for category, message in messages %}
-
         showToast("{{ message }}", "{{ category }}");
-
       {% endfor %}
     {% endif %}
   {% endwith %}
-
 </script>
+<script src="{{ url_for('static', filename='login.js') }}"></script>
 {% endblock %}
