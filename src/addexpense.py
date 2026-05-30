@@ -143,10 +143,10 @@ def addexpense():
         exp_date = form.date.data
         note = form.note.data
 
-        category = Category.query.filter(
-            Category.user_id == current_user.user_id,
-            Category.name != "Uncategorized"
-        ).all()
+        category = Category.query.filter_by(
+            category_id=category_id,
+            user_id=current_user.user_id
+        ).first()
 
         if not category:
             return jsonify({

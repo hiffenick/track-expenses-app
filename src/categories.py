@@ -201,10 +201,10 @@ def delete_category(cat_id):
                 expenses.category_id == cat_id
             ).update({"category_id": target_id}, synchronize_session=False)
         else:
-            db.session.query(expenses).filter(
-                expenses.category_id == cat_id
-            ).update({"category_id": None}, synchronize_session=False)
-
+            return jsonify({
+                 "success": False,
+                 "error": "Fallback category not found"
+           }), 400
         db.session.delete(cat)
         db.session.commit()
         return jsonify({"success": True, "message": "Category deleted"}), 200
