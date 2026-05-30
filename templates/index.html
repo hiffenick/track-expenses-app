@@ -1,23 +1,249 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Expenso — Smarter Expense Tracking</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{url_for('static' ,filename='home.css')}}" />
+</head>
+<body>
 
-{% block content %}
-<section class="hero d-flex align-items-center justify-content-center text-center py-5">
-  <div class="container">
-    <div class="hero-text">
-      <h1 class="display-4 fw-bold mb-3">Smarter Expense Tracking</h1>
-      <p class="tagline lead mb-4">
-        We track what you <span class="highlight">spend</span> and guide you to what you <span class="highlight">save</span> next.
-      </p>
+  <!-- ── Navbar ─────────────────────────────────────────────── -->
+  <nav class="lp-nav">
+    <div class="lp-nav-brand">
+      <div class="lp-brand-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+          <path d="M2 17l10 5 10-5"/>
+          <path d="M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <span class="lp-brand-name">Expenso</span>
+    </div>
+    <div class="lp-nav-links">
+      <a href="#features" class="lp-nav-link">Features</a>
+      <a href="#how" class="lp-nav-link">How it works</a>
+    </div>
+    <div class="lp-nav-actions">
+      <a href="{{ url_for('login.login') }}" class="lp-btn-ghost">Login</a>
+      <a href="{{ url_for('signup.signup') }}" class="lp-btn-primary">Sign Up</a>
+    </div>
+  </nav>
 
-      <div class="d-flex justify-content-center flex-wrap gap-3">
-        <a href="{{url_for('login.login')}}" class="btn btn-outline-primary btn-lg">Login</a>
-        <a href="{{url_for('signup.signup')}}" class="btn btn-primary btn-lg">Sign Up</a>
+  <!-- ── Hero ───────────────────────────────────────────────── -->
+  <section class="lp-hero">
+
+    <!-- ambient glow blobs -->
+    <div class="lp-blob lp-blob--1"></div>
+    <div class="lp-blob lp-blob--2"></div>
+    <div class="lp-blob lp-blob--3"></div>
+
+    <!-- grid texture overlay -->
+    <div class="lp-grid-overlay"></div>
+
+    <div class="lp-hero-inner">
+
+      <!-- eyebrow pill -->
+      <div class="lp-eyebrow" data-anim="0">
+        <span class="lp-eyebrow-dot"></span>
+        Personal Finance · Built different
       </div>
 
-      <p class="mt-4 small">
-        Or <a href="" class="text-decoration-underline">Start Tracking</a> without an account.
+      <!-- headline -->
+      <h1 class="lp-headline" data-anim="1">
+        Track what you
+        <span class="lp-hl-italic"> spend.</span>
+        <br>
+        Own what you
+        <span class="lp-hl-accent"> save.</span>
+      </h1>
+
+      <!-- subline -->
+      <p class="lp-subline" data-anim="2">
+        Expenso turns raw transactions into clarity — budgets, streaks,
+        analytics, and a spending fingerprint that's uniquely yours.
       </p>
+
+      <!-- CTA row -->
+      <div class="lp-cta-row" data-anim="3">
+        <a href="{{ url_for('signup.signup') }}" class="lp-cta-primary">
+          Get started free
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </a>
+        <a href="{{ url_for('login.login') }}" class="lp-cta-ghost">
+          I already have an account
+        </a>
+      </div>
+
+      <!-- social proof strip -->
+      <div class="lp-proof" data-anim="4">
+        <div class="lp-proof-avatars">
+          <div class="lp-av" style="background:#e8a84c">A</div>
+          <div class="lp-av" style="background:#2dd4bf">K</div>
+          <div class="lp-av" style="background:#a78bfa">R</div>
+          <div class="lp-av" style="background:#f87171">S</div>
+        </div>
+        <span class="lp-proof-text">Join people tracking smarter today</span>
+      </div>
+
     </div>
-  </div>
-</section>
-{% endblock content %}
+
+    <!-- floating stat cards -->
+    <div class="lp-float-cards" data-anim="5">
+      <div class="lp-float-card lp-fc--1">
+        <span class="lp-fc-label">This month</span>
+        <span class="lp-fc-value">₹12,480</span>
+        <span class="lp-fc-delta lp-fc-delta--down">↑ 8% vs last</span>
+      </div>
+      <div class="lp-float-card lp-fc--2">
+        <span class="lp-fc-label">No-spend streak</span>
+        <span class="lp-fc-value">6 <span class="lp-fc-unit">days 🔥</span></span>
+        <span class="lp-fc-delta lp-fc-delta--good">Best: 12 days</span>
+      </div>
+      <div class="lp-float-card lp-fc--3">
+        <span class="lp-fc-label">Budget left</span>
+        <span class="lp-fc-value">₹3,520</span>
+        <span class="lp-fc-delta lp-fc-delta--good">↓ On track</span>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ── Features ───────────────────────────────────────────── -->
+  <section class="lp-features" id="features">
+    <div class="lp-section-inner">
+
+      <div class="lp-section-header">
+        <p class="lp-section-eyebrow">Why Expenso</p>
+        <h2 class="lp-section-title">Everything your wallet wishes you knew</h2>
+      </div>
+
+      <div class="lp-feat-grid">
+
+        <div class="lp-feat-card lp-feat-card--amber">
+          <div class="lp-feat-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+          </div>
+          <h3 class="lp-feat-title">Spending fingerprint</h3>
+          <p class="lp-feat-body">A radar chart that maps your unique spending shape — compare months at a glance.</p>
+        </div>
+
+        <div class="lp-feat-card lp-feat-card--teal">
+          <div class="lp-feat-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <h3 class="lp-feat-title">No-spend streaks</h3>
+          <p class="lp-feat-body">Gamified habit tracking — build streaks, hit milestones, and celebrate discipline.</p>
+        </div>
+
+        <div class="lp-feat-card lp-feat-card--purple">
+          <div class="lp-feat-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          </div>
+          <h3 class="lp-feat-title">Predictive projection</h3>
+          <p class="lp-feat-body">Know your month-end spend before the month ends — with confidence intervals.</p>
+        </div>
+
+        <div class="lp-feat-card lp-feat-card--rose">
+          <div class="lp-feat-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </div>
+          <h3 class="lp-feat-title">Regret score</h3>
+          <p class="lp-feat-body">Tag expenses as "Worth it" or "Regret" — watch patterns emerge over time.</p>
+        </div>
+
+        <div class="lp-feat-card lp-feat-card--amber">
+          <div class="lp-feat-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <h3 class="lp-feat-title">Spending heatmap</h3>
+          <p class="lp-feat-body">See exactly when you spend — by day, week, and hour. Spot the patterns.</p>
+        </div>
+
+        <div class="lp-feat-card lp-feat-card--teal">
+          <div class="lp-feat-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <h3 class="lp-feat-title">Smart categories</h3>
+          <p class="lp-feat-body">Budget by category with rollover, health indicators, and 6-month trend charts.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── How it works ───────────────────────────────────────── -->
+  <section class="lp-how" id="how">
+    <div class="lp-section-inner">
+      <div class="lp-section-header">
+        <p class="lp-section-eyebrow">How it works</p>
+        <h2 class="lp-section-title">Up and running in 60 seconds</h2>
+      </div>
+      <div class="lp-steps">
+        <div class="lp-step">
+          <div class="lp-step-num">01</div>
+          <h3 class="lp-step-title">Create your account</h3>
+          <p class="lp-step-body">Sign up with just a name and password — no card required, ever.</p>
+        </div>
+        <div class="lp-step-arrow">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+        <div class="lp-step">
+          <div class="lp-step-num">02</div>
+          <h3 class="lp-step-title">Log your first expense</h3>
+          <p class="lp-step-body">Add amount, category, note — takes 5 seconds. Your dashboard updates instantly.</p>
+        </div>
+        <div class="lp-step-arrow">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+        <div class="lp-step">
+          <div class="lp-step-num">03</div>
+          <h3 class="lp-step-title">Watch the insights appear</h3>
+          <p class="lp-step-body">Analytics, streaks, projections, and your spending fingerprint — all automatic.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Final CTA ──────────────────────────────────────────── -->
+  <section class="lp-final-cta">
+    <div class="lp-blob lp-blob--cta"></div>
+    <div class="lp-final-inner">
+      <p class="lp-final-eyebrow">Ready?</p>
+      <h2 class="lp-final-title">Your financial mirror is waiting.</h2>
+      <p class="lp-final-sub">Free forever for personal use. No credit card. No catch.</p>
+      <div class="lp-cta-row">
+        <a href="{{ url_for('signup.signup') }}" class="lp-cta-primary">
+          Create free account
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </a>
+        <a href="{{ url_for('login.login') }}" class="lp-cta-ghost">Login instead</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ─────────────────────────────────────────────── -->
+  <footer class="lp-footer">
+    <div class="lp-footer-brand">
+      <div class="lp-brand-icon lp-brand-icon--sm">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+          <path d="M2 17l10 5 10-5"/>
+          <path d="M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <span class="lp-brand-name lp-brand-name--sm">Expenso</span>
+    </div>
+    <p class="lp-footer-copy">© 2026 Expenso · Personal finance, simplified.</p>
+  </footer>
+
+  <script src="{{url_for('static' , filename='home.js')}}"></script>
+</body>
+</html>
