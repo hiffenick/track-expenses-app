@@ -70,28 +70,28 @@ const CAT_MAP = {};
 CATEGORIES.forEach(c => { CAT_MAP[c.id] = c; });
 
 /* Fallback demo data — only active when Flask sends empty expenses list */
-if (!RAW_EXPENSES.length) {
-  RAW_EXPENSES = [
-    { id:1,  title:'Pizza Hut',       category:'food',          amount:450,  date:'2026-05-14', note:'Dinner with friends' },
-    { id:2,  title:'Uber ride',        category:'transport',     amount:180,  date:'2026-05-13', note:'Office commute' },
-    { id:3,  title:'H&M Shirt',        category:'shopping',      amount:1299, date:'2026-05-12', note:'' },
-    { id:4,  title:'Netflix',          category:'entertainment', amount:199,  date:'2026-05-11', note:'Monthly subscription' },
-    { id:5,  title:'Apollo Pharmacy',  category:'health',        amount:640,  date:'2026-05-10', note:'Vitamins' },
-    { id:6,  title:'Electricity Bill', category:'utilities',     amount:1200, date:'2026-05-09', note:'May bill' },
-    { id:7,  title:'D-Mart Groceries', category:'groceries',     amount:2340, date:'2026-05-08', note:'Weekly groceries' },
-    { id:8,  title:'Udemy Course',     category:'education',     amount:499,  date:'2026-05-07', note:'React course' },
-    { id:9,  title:'IndiGo flight',    category:'travel',        amount:3200, date:'2026-05-06', note:'Mumbai → Pune' },
-    { id:10, title:'Swiggy order',     category:'food',          amount:380,  date:'2026-05-05', note:'Biryani' },
-    { id:11, title:'Rapido',           category:'transport',     amount:95,   date:'2026-05-04', note:'' },
-    { id:12, title:'Noon Cafe',        category:'food',          amount:520,  date:'2026-05-03', note:'Team lunch' },
-    { id:13, title:'Gym membership',   category:'health',        amount:1500, date:'2026-04-28', note:'Monthly' },
-    { id:14, title:'Zara jacket',      category:'shopping',      amount:2499, date:'2026-04-25', note:'Sale item' },
-    { id:15, title:'Jio recharge',     category:'utilities',     amount:239,  date:'2026-04-22', note:'Monthly plan' },
-    { id:16, title:'Dominos',          category:'food',          amount:310,  date:'2026-04-20', note:'Weekend treat' },
-    { id:17, title:'Ola ride',         category:'transport',     amount:210,  date:'2026-04-18', note:'' },
-    { id:18, title:'Amazon order',     category:'shopping',      amount:799,  date:'2026-04-15', note:'Earphones' },
-  ];
-}
+// if (!RAW_EXPENSES.length) {
+//   RAW_EXPENSES = [
+//     { id:1,  title:'Pizza Hut',       category:'food',          amount:450,  date:'2026-05-14', note:'Dinner with friends' },
+//     { id:2,  title:'Uber ride',        category:'transport',     amount:180,  date:'2026-05-13', note:'Office commute' },
+//     { id:3,  title:'H&M Shirt',        category:'shopping',      amount:1299, date:'2026-05-12', note:'' },
+//     { id:4,  title:'Netflix',          category:'entertainment', amount:199,  date:'2026-05-11', note:'Monthly subscription' },
+//     { id:5,  title:'Apollo Pharmacy',  category:'health',        amount:640,  date:'2026-05-10', note:'Vitamins' },
+//     { id:6,  title:'Electricity Bill', category:'utilities',     amount:1200, date:'2026-05-09', note:'May bill' },
+//     { id:7,  title:'D-Mart Groceries', category:'groceries',     amount:2340, date:'2026-05-08', note:'Weekly groceries' },
+//     { id:8,  title:'Udemy Course',     category:'education',     amount:499,  date:'2026-05-07', note:'React course' },
+//     { id:9,  title:'IndiGo flight',    category:'travel',        amount:3200, date:'2026-05-06', note:'Mumbai → Pune' },
+//     { id:10, title:'Swiggy order',     category:'food',          amount:380,  date:'2026-05-05', note:'Biryani' },
+//     { id:11, title:'Rapido',           category:'transport',     amount:95,   date:'2026-05-04', note:'' },
+//     { id:12, title:'Noon Cafe',        category:'food',          amount:520,  date:'2026-05-03', note:'Team lunch' },
+//     { id:13, title:'Gym membership',   category:'health',        amount:1500, date:'2026-04-28', note:'Monthly' },
+//     { id:14, title:'Zara jacket',      category:'shopping',      amount:2499, date:'2026-04-25', note:'Sale item' },
+//     { id:15, title:'Jio recharge',     category:'utilities',     amount:239,  date:'2026-04-22', note:'Monthly plan' },
+//     { id:16, title:'Dominos',          category:'food',          amount:310,  date:'2026-04-20', note:'Weekend treat' },
+//     { id:17, title:'Ola ride',         category:'transport',     amount:210,  date:'2026-04-18', note:'' },
+//     { id:18, title:'Amazon order',     category:'shopping',      amount:799,  date:'2026-04-15', note:'Earphones' },
+//   ];
+// }
 
 /* ═══════════════════════════════════════════════════════════════
    STATE
