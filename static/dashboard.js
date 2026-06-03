@@ -14,13 +14,13 @@ const PAGE_LABELS = {
 };
 
 /* ── Toast helper ─────────────────────────────────────────── */
-function showToast(message, duration = 2400) {
-  const toast = document.getElementById('navToast');
-  if (!toast) return;
-  toast.textContent = message;
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), duration);
-}
+// function showToast(message, duration = 2400) {
+//   const toast = document.getElementById('navToast');
+//   if (!toast) return;
+//   toast.textContent = message;
+//   toast.classList.add('show');
+//   setTimeout(() => toast.classList.remove('show'), duration);
+// }
 
 /* ── Navigation ───────────────────────────────────────────── */
 function navigateTo(page) {
