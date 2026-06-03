@@ -1,32 +1,147 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<section class="container py-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card p-4" id="otpCard">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h4>Verify OTP</h4>
-          <button class="btn btn-sm btn-outline-secondary" id="toggleThemeBtn" title="Toggle Dark Mode">
-            🌓
-          </button>
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='verify.css') }}">
+
+<div class="vf-root">
+
+  <!-- ── Left panel — branding ──────────────────────────────── -->
+  <div class="vf-panel vf-panel--left">
+
+    <div class="vf-blob vf-blob--1"></div>
+    <div class="vf-blob vf-blob--2"></div>
+    <div class="vf-grid-overlay"></div>
+
+    <div class="vf-left-inner">
+
+      <!-- brand -->
+      <a href="{{ url_for('home.home') }}" class="vf-brand">
+        <div class="vf-brand-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+            <path d="M2 17l10 5 10-5"/>
+            <path d="M2 12l10 5 10-5"/>
+          </svg>
         </div>
-        <p class="mb-4">We’ve sent a 6-digit code to your registered email. Enter it below to continue.</p>
-        <form method="POST" action="{{url_for('verify.verify')}}">
-          {{ form.hidden_tag() }}
-          <div class="mb-3">
-            {{ form.otp.label(class="form-label") }}
-            {{ form.otp( class="form-control" , placeholder="123456")}}
-          </div>
-          <button type="submit" class="btn cta-btn w-100">Verify</button>
-        </form>
-        <div class="text-center mt-3">
-          <small>Didn't receive it? <a href="">Resend OTP</a></small>
+        <span class="vf-brand-name">Expenso</span>
+      </a>
+
+      <!-- headline -->
+      <div class="vf-left-copy">
+        <p class="vf-left-eyebrow">Almost there</p>
+        <h1 class="vf-left-title">One last<br><em>step to go.</em></h1>
+        <p class="vf-left-sub">We've sent a 6-digit code to your registered email. Enter it to confirm your identity and get started.</p>
+      </div>
+
+      <!-- steps indicator -->
+      <div class="vf-steps">
+        <div class="vf-step vf-step--done">
+          <span class="vf-step-dot">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          <span class="vf-step-label">Account created</span>
+        </div>
+        <div class="vf-step-line"></div>
+        <div class="vf-step vf-step--active">
+          <span class="vf-step-dot vf-step-dot--active">
+            <span class="vf-step-pulse"></span>
+          </span>
+          <span class="vf-step-label vf-step-label--active">Verify email</span>
+        </div>
+        <div class="vf-step-line vf-step-line--dim"></div>
+        <div class="vf-step vf-step--next">
+          <span class="vf-step-dot vf-step-dot--dim"></span>
+          <span class="vf-step-label vf-step-label--dim">Start tracking</span>
         </div>
       </div>
+
+      <!-- info card -->
+      <div class="vf-info-card">
+        <span class="vf-ic-label">Code expires in</span>
+        <span class="vf-ic-value" id="leftCountdown">10:00</span>
+        <span class="vf-ic-sub">Check your spam folder if you don't see it.</span>
+      </div>
+
     </div>
   </div>
-</section>
 
-<script> </script>
+  <!-- ── Right panel — form ─────────────────────────────────── -->
+  <div class="vf-panel vf-panel--right">
+    <div class="vf-form-wrap">
+
+      <!-- mobile brand -->
+      <a href="{{ url_for('home.home') }}" class="vf-brand vf-brand--mobile">
+        <div class="vf-brand-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+            <path d="M2 17l10 5 10-5"/>
+            <path d="M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <span class="vf-brand-name">Expenso</span>
+      </a>
+
+      <div class="vf-form-header">
+        <p class="vf-form-eyebrow">Step 2 of 2</p>
+        <h2 class="vf-form-title">Verify OTP</h2>
+        <p class="vf-form-sub">We've sent a 6-digit code to your registered email. Enter it below to continue.</p>
+      </div>
+
+      <!-- OTP form -->
+      <form method="POST" action="{{ url_for('verify.verify') }}" class="vf-form" id="verifyForm" novalidate>
+        {{ form.hidden_tag() }}
+
+        <!-- OTP boxes -->
+        <div class="vf-field" id="field-otp">
+          <label class="vf-label" for="{{ form.otp.id }}">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+            {{ form.otp.label.text }}
+          </label>
+
+          <!-- 6 individual digit boxes (JS syncs to hidden real input) -->
+          <div class="vf-otp-boxes" id="otpBoxes" role="group" aria-label="One-time password digits">
+            <input class="vf-otp-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 1">
+            <input class="vf-otp-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 2">
+            <input class="vf-otp-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 3">
+            <span class="vf-otp-sep">–</span>
+            <input class="vf-otp-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 4">
+            <input class="vf-otp-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 5">
+            <input class="vf-otp-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 6">
+          </div>
+
+          <!-- Hidden real form field that WTForms controls -->
+          <div style="display:none">
+            {{ form.otp(class="vf-input", placeholder="123456", id="otpHidden") }}
+          </div>
+
+          {% if form.otp.errors %}
+            {% for error in form.otp.errors %}
+              <span class="vf-field-error">{{ error }}</span>
+            {% endfor %}
+          {% endif %}
+          <span class="vf-field-error vf-field-error--js" id="err-otp"></span>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="vf-submit" id="submitBtn">
+          <span class="vf-submit-text">Verify</span>
+          <span class="vf-submit-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </button>
+
+      </form>
+
+      <div class="vf-resend">
+        <p>Didn't receive it? <a href="" class="vf-resend-link" id="resendLink">Resend OTP</a></p>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='verify.js') }}"></script>
 {% endblock %}

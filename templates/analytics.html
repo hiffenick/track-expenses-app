@@ -355,6 +355,34 @@
   </main>
 </div>
 
+<!-- Search Modal -->
+<div class="search-modal" id="searchModal">
+  <div class="search-box">
+    <div class="search-header">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input type="text" id="searchInput" placeholder="Search expenses, categories..." autocomplete="off"/>
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" id="searchResults">
+      <div class="search-empty">Start typing to search your expenses…</div>
+    </div>
+  </div>
+</div>
+
+<!-- Notification Panel -->
+<div class="notif-panel" id="notifPanel">
+  <div class="notif-panel-header">
+    <span>Notifications</span>
+    <button class="notif-clear-all" id="notifClearAll">Clear all</button>
+  </div>
+  <div class="notif-list" id="notifList">
+    <div class="notif-empty">No notifications</div>
+  </div>
+</div>
+<div class="notif-backdrop" id="notifBackdrop"></div>
+
 <!-- Sidebar overlay -->
  <div class="an-hm-tooltip" id="heatmapTooltip"></div>
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
