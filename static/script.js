@@ -91,7 +91,15 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Initialize chart
-  const ctx = document.getElementById('expenseChart').getContext('2d');
+  const canvas = document.getElementById('expenseChart');
+
+  if (!canvas) {
+    console.warn('expenseChart canvas not found');
+    return;
+  }
+
+  const ctx = canvas.getContext('2d');
+
   new Chart(ctx, {
     type: 'pie',
     data: {
