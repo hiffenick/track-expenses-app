@@ -49,26 +49,26 @@ gsap.utils.toArray("[data-scroll]").forEach(elem => {
 });
 
 
-const toggleBtn = document.getElementById("modeToggle");
-const root = document.documentElement;
+// const toggleBtn = document.getElementById("modeToggle");
+// const root = document.documentElement;
 
 // Get saved theme from localStorage
-const savedTheme = localStorage.getItem("theme");
-const defaultTheme = savedTheme || "light";
+// const savedTheme = localStorage.getItem("theme");
+// const defaultTheme = savedTheme || "light";
 
 // Apply saved or default theme
-root.setAttribute("data-theme", defaultTheme);
-toggleBtn.textContent = defaultTheme === "dark" ? "🌙" : "☀️";
+// root.setAttribute("data-theme", defaultTheme);
+// toggleBtn.textContent = defaultTheme === "dark" ? "🌙" : "☀️";
 
 // Toggle and save theme
-toggleBtn.addEventListener("click", () => {
-  const currentTheme = root.getAttribute("data-theme");
-  const newTheme = currentTheme === "dark" ? "light" : "dark";
+// toggleBtn.addEventListener("click", () => {
+//   const currentTheme = root.getAttribute("data-theme");
+//   const newTheme = currentTheme === "dark" ? "light" : "dark";
 
-  root.setAttribute("data-theme", newTheme);
-  localStorage.setItem("theme", newTheme); // Save to localStorage
-  toggleBtn.textContent = newTheme === "dark" ? "🌙" : "☀️";
-});
+//   root.setAttribute("data-theme", newTheme);
+//   localStorage.setItem("theme", newTheme); // Save to localStorage
+//   toggleBtn.textContent = newTheme === "dark" ? "🌙" : "☀️";
+// });
 
 
 document.addEventListener('DOMContentLoaded', () => {
