@@ -41,18 +41,42 @@ def dashboard():
         top_category = "N/A"
 
     # ✅ Prepare chart data
-    chart_labels = [row[0] for row in category_tools_query]
-    chart_values = [float(row[1]) for row in category_tools_query]  # convert Decimal to float if needed
+    # ✅ Prepare chart data as dict
+    categories_dict = {row[0]: float(row[1]) for row in category_tools_query}
 
-    # ✅ Final summary object
+    # ✅ Trend vs last month
+    last_month = now.month - 1 if now.month > 1 else 12
+    last_month_year = now.year if now.month > 1 else now.year - 1
+    last_month_spent = db.session.query(func.coalesce(func.sum(expenses.expense_amount), 0)) \
+        .filter(
+            expenses.user_id == current_user.user_id,
+            extract('month', expenses.expense_date) == last_month,
+            extract('year', expenses.expense_date) == last_month_year
+        ).scalar()
+    last_month_spent = float(last_month_spent)
+    trend_percent = ((float(monthly_spent) - last_month_spent) / last_month_spent * 100) if last_month_spent > 0 else None
+
+    # ✅ Recent transactions
+    recent_expenses = expenses.query.filter_by(user_id=current_user.user_id) \
+        .order_by(expenses.expense_date.desc()).limit(6).all()
+    recent_transactions = [
+        {
+            "name": exp.expense_title,
+            "amount": float(exp.expense_amount),
+            "date": exp.expense_date.strftime("%Y-%m-%d"),
+            "category": exp.category.name if exp.category else "Other"
+        }
+        for exp in recent_expenses
+    ]
+
+# ✅ Final summary object
     summary = {
         'total_spent': float(total_spent),
         'monthly_spent': float(monthly_spent),
         'top_category': top_category,
-        'chart_data': {
-            'labels': chart_labels,
-            'values': chart_values
-        }
+        'categories': categories_dict,
+        'trend_percent': trend_percent,
+        'recent_transactions': recent_transactions,
     }
 
     all_expenses = expenses.query.filter_by(
@@ -91,3 +115,4 @@ def dashboard():
         categories=category_data,
         now=now
     )
+

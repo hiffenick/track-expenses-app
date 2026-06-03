@@ -137,9 +137,8 @@ function renderDashboardChart(data) {
   if (!ctx) return;
 
   if (typeof Chart === 'undefined') {
-    console.warn('Chart.js not loaded — skipping chart render.');
     ctx.closest('.chart-wrapper').innerHTML =
-      '<p style="color:var(--text-muted);font-size:13px;text-align:center;padding:40px 20px;">Chart.js not loaded.</p>';
+      '<p style="color:#8b90a8;font-size:13px;text-align:center;padding:40px 20px;">Chart.js not loaded.</p>';
     return;
   }
 
@@ -149,7 +148,7 @@ function renderDashboardChart(data) {
 
   if (!labels.length) {
     ctx.closest('.chart-wrapper').innerHTML =
-      '<p style="color:var(--text-muted);font-size:13px;text-align:center;padding:40px 20px;">No expense data yet.</p>';
+      '<p style="color:#8b90a8;font-size:13px;text-align:center;padding:40px 20px;">No expense data yet.</p>';
     return;
   }
 
@@ -158,53 +157,177 @@ function renderDashboardChart(data) {
     '#60a5fa','#fb923c','#34d399','#f472b6',
   ];
 
-  new Chart(ctx, {
+  const total = values.reduce((a, b) => a + b, 0);
+  const sorted = labels
+    .map((l, i) => ({ label: l, value: values[i], color: PALETTE[i % PALETTE.length] }))
+    .sort((a, b) => b.value - a.value);
+
+  const wrapper = ctx.closest('.chart-wrapper');
+
+  // ── Build layout ──
+  wrapper.innerHTML = `
+    <div class="premium-chart-wrap">
+      <div class="premium-donut-area" id="donutArea">
+        <canvas id="expenseChartCanvas"></canvas>
+        <div class="donut-center-label">
+          <span class="donut-total">₹${total.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
+          <span class="donut-sublabel">total</span>
+        </div>
+      </div>
+      <div class="premium-bar-area" id="barArea" style="display:none;">
+        <canvas id="expenseBarCanvas"></canvas>
+      </div>
+      <div class="premium-legend" id="premiumLegend"></div>
+    </div>
+  `;
+
+  // ── Legend ──
+  const legendEl = document.getElementById('premiumLegend');
+  legendEl.innerHTML = sorted.map(item => {
+    const pct = total > 0 ? ((item.value / total) * 100).toFixed(1) : 0;
+    return `
+      <div class="legend-row">
+        <div class="legend-top">
+          <div class="legend-dot-label">
+            <span class="legend-dot" style="background:${item.color}"></span>
+            <span class="legend-name">${item.label}</span>
+          </div>
+          <span class="legend-amount">₹${item.value.toLocaleString('en-IN')}</span>
+        </div>
+        <div class="legend-bar-track">
+          <div class="legend-bar-fill" style="width:${pct}%;background:${item.color}"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  if (sorted.length) {
+    const top = sorted[0];
+    const topPct = total > 0 ? ((top.value / total) * 100).toFixed(1) : 0;
+    legendEl.innerHTML += `
+      <div class="legend-insight">
+        <span class="insight-dot" style="background:${top.color}"></span>
+        <span><strong>${top.label}</strong> is ${topPct}% of spending this period.</span>
+      </div>
+    `;
+  }
+
+  // ── Donut chart ──
+  const donutCtx = document.getElementById('expenseChartCanvas');
+  const donutChart = new Chart(donutCtx, {
     type: 'doughnut',
     data: {
-      labels,
+      labels: sorted.map(s => s.label),
       datasets: [{
-        data:            values,
-        backgroundColor: PALETTE.slice(0, labels.length),
-        borderColor:     'transparent',
-        borderWidth:     0,
-        hoverOffset:     6,
+        data: sorted.map(s => s.value),
+        backgroundColor: sorted.map(s => s.color),
+        borderColor: '#12152a',
+        borderWidth: 3,
+        hoverOffset: 8,
       }],
     },
     options: {
-      cutout: '68%',
+      cutout: '72%',
       responsive: true,
       maintainAspectRatio: true,
       plugins: {
-        legend: {
-          position: 'right',
-          labels: {
-            color: '#8b90a8',
-            font:  { family: "'DM Sans', sans-serif", size: 11 },
-            padding: 12,
-            usePointStyle: true,
-            pointStyleWidth: 8,
-          },
-        },
+        legend: { display: false },
         tooltip: {
           callbacks: {
             label: ctx => {
-              const val   = ctx.parsed;
-              const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
-              const pct   = total ? ((val / total) * 100).toFixed(1) : 0;
-              return ` ₹${val.toLocaleString('en-IN')}  (${pct}%)`;
+              const val = ctx.parsed;
+              const pct = total ? ((val / total) * 100).toFixed(1) : 0;
+              return `  ₹${val.toLocaleString('en-IN')}  (${pct}%)`;
             },
           },
           backgroundColor: '#1e2130',
-          borderColor:     'rgba(255,255,255,0.08)',
-          borderWidth:     1,
-          titleColor:      '#f0f2f8',
-          bodyColor:       '#8b90a8',
-          padding:         10,
+          borderColor: 'rgba(255,255,255,0.08)',
+          borderWidth: 1,
+          titleColor: '#f0f2f8',
+          bodyColor: '#8b90a8',
+          padding: 12,
         },
       },
     },
   });
+
+  // ── Bar chart ──
+  const barCtx = document.getElementById('expenseBarCanvas');
+  const barChart = new Chart(barCtx, {
+    type: 'bar',
+    data: {
+      labels: sorted.map(s => s.label),
+      datasets: [{
+        data: sorted.map(s => s.value),
+        backgroundColor: sorted.map(s => s.color + 'cc'),
+        borderColor: sorted.map(s => s.color),
+        borderWidth: 1,
+        borderRadius: 6,
+        borderSkipped: false,
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      indexAxis: 'y',
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => `  ₹${ctx.parsed.x.toLocaleString('en-IN')}`,
+          },
+          backgroundColor: '#1e2130',
+          borderColor: 'rgba(255,255,255,0.08)',
+          borderWidth: 1,
+          titleColor: '#f0f2f8',
+          bodyColor: '#8b90a8',
+          padding: 12,
+        },
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: {
+            color: '#8b90a8',
+            font: { family: "'DM Sans', sans-serif", size: 10 },
+            callback: v => `₹${Number(v).toLocaleString('en-IN')}`,
+          },
+          border: { color: 'rgba(255,255,255,0.06)' },
+        },
+        y: {
+          grid: { display: false },
+          ticks: {
+            color: '#c4c8e0',
+            font: { family: "'DM Sans', sans-serif", size: 11 },
+          },
+          border: { color: 'rgba(255,255,255,0.06)' },
+        },
+      },
+    },
+  });
+
+  // ── Wire up pill toggle buttons ──
+  const pillBtns = document.querySelectorAll('.card-actions .pill-btn');
+  const donutArea = document.getElementById('donutArea');
+  const barArea   = document.getElementById('barArea');
+
+  pillBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      pillBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      if (btn.textContent.trim() === 'Bar') {
+        donutArea.style.display = 'none';
+        barArea.style.display   = 'block';
+        barChart.resize();
+      } else {
+        donutArea.style.display = 'block';
+        barArea.style.display   = 'none';
+      }
+    });
+  });
 }
+
 
 /* ── Pill buttons (chart type toggle, visual only) ────────── */
 function bindPillBtns() {
