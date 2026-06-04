@@ -116,7 +116,12 @@
           </svg>
           <span class="notif-dot"></span>
         </button>
-        <div class="topbar-avatar"></div>
+        <a href="{{ url_for('profile.profile') }}"
+          style="text-decoration: none; color: inherit;">
+            <div class="topbar-avatar">
+                {{ user[0] | upper if user else 'U' }}
+            </div>
+        </a>
       </div>
     </header>
 

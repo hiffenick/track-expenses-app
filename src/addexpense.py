@@ -29,7 +29,8 @@ def show_addexpense():
         "addexpense.html",
         categories=categories,
         today=date.today(),
-        form=form
+        form=form,
+        user=current_user.user_name
     )
 
 @addexpense_route.route('/create-category', methods=['POST'])

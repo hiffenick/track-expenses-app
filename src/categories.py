@@ -96,7 +96,8 @@ def categories():
     form = CategoryForm()
     return render_template('categories.html',
         categories_json={"categories": categories_data},
-        form=form
+        form=form,
+        user=current_user.user_name
     )
 
 

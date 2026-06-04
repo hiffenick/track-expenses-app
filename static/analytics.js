@@ -850,3 +850,17 @@ function initFilterBar() {
     applyFilters(FILTER_STATE);
   });
 }
+
+const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+const now = new Date();
+const currentMonth = now.getMonth(); // 0-based
+
+const current = monthNames[currentMonth];
+const previous = monthNames[(currentMonth - 1 + 12) % 12];
+
+document.querySelectorAll(".an-period-btn")[0]
+  .querySelector(".an-pb-val").textContent = current;
+
+document.querySelectorAll(".an-period-btn")[1]
+  .querySelector(".an-pb-val").textContent = previous;
