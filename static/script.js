@@ -76,6 +76,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!summaryScript) return;
   const summary = JSON.parse(summaryScript.textContent);
 
+  console.log(summary);
+
   // Fill in summary text
   document.getElementById('totalSpent').textContent = `$${summary.total_spent}`;
   document.getElementById('monthlySpent').textContent = `$${summary.monthly_spent}`;

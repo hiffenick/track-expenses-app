@@ -61,28 +61,6 @@ function navigateTo(page) {
 //   });
 // }
 
-/* ── Sidebar toggle (mobile) ──────────────────────────────── */
-const sidebar  = document.getElementById('sidebar');
-const overlay  = document.getElementById('sidebarOverlay');
-const hamburger = document.getElementById('hamburgerBtn');
-
-function openSidebar() {
-  sidebar?.classList.add('open');
-  overlay?.classList.add('active');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeSidebar() {
-  sidebar?.classList.remove('open');
-  overlay?.classList.remove('active');
-  document.body.style.overflow = '';
-}
-
-hamburger?.addEventListener('click', () => {
-  sidebar?.classList.contains('open') ? closeSidebar() : openSidebar();
-});
-
-overlay?.addEventListener('click', closeSidebar);
 
 /* ── Live date display ────────────────────────────────────── */
 function updateDate() {
