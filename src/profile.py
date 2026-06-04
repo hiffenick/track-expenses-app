@@ -37,7 +37,8 @@ def profile():
         current_user=current_user,
         otp_form=otp_form,
         password_form=password_form,
-        delete_form = delete_form
+        delete_form = delete_form,
+        user=current_user.user_name
     )
 
 

@@ -204,26 +204,56 @@ function applyFilters(expenses) {
    HERO UPDATE
 ═══════════════════════════════════════════════════════════════ */
 function updateHero(filtered) {
-  const now      = new Date();
-  const thisM    = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-  const lastDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-  const lastM    = `${lastDate.getFullYear()}-${String(lastDate.getMonth() + 1).padStart(2, '0')}`;
+  const y = state.year;
+  const m = state.month; // current selected month from UI
 
+  // current month total (based on UI selection, not system date)
   const thisTotal = RAW_EXPENSES
-    .filter(e => e.date.startsWith(thisM) && !e.is_regret)
-    .reduce((s, e) => s + e.amount, 0);
-  const lastTotal = RAW_EXPENSES
-    .filter(e => e.date.startsWith(thisM) && !e.is_regret)
+    .filter(e => {
+      if (e.is_regret) return false;
+      const [ey, em] = e.date.split('-').map(Number);
+      return ey === y && (m === 'all' || em === m);
+    })
     .reduce((s, e) => s + e.amount, 0);
 
+  // last month logic (based on selected year/month context)
+  let lastTotal = 0;
+
+  if (m !== 'all') {
+    const prevMonth = m === 1 ? 12 : m - 1;
+    const prevYear  = m === 1 ? y - 1 : y;
+
+    lastTotal = RAW_EXPENSES
+      .filter(e => {
+        if (e.is_regret) return false;
+        const [ey, em] = e.date.split('-').map(Number);
+        return ey === prevYear && em === prevMonth;
+      })
+      .reduce((s, e) => s + e.amount, 0);
+  } else {
+    // fallback: compare with previous full year month pattern
+    const now = new Date();
+    const thisMonth = now.getMonth() + 1;
+    const lastDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+
+    const lastM = `${lastDate.getFullYear()}-${String(lastDate.getMonth() + 1).padStart(2, '0')}`;
+
+    lastTotal = RAW_EXPENSES
+      .filter(e => e.date.startsWith(lastM) && !e.is_regret)
+      .reduce((s, e) => s + e.amount, 0);
+  }
+
+  // UI updates
   document.getElementById('heroMonthTotal').textContent = fmtINR(thisTotal);
   document.getElementById('heroTxCount').textContent    = filtered.length;
-  document.getElementById('heroYear').textContent       = state.year;
+  document.getElementById('heroYear').textContent       = y;
 
   const trendEl = document.getElementById('heroTrend');
+
   if (lastTotal > 0) {
     const pct = ((thisTotal - lastTotal) / lastTotal * 100).toFixed(1);
     const up  = thisTotal >= lastTotal;
+
     trendEl.textContent = `${up ? '↑' : '↓'} ${Math.abs(pct)}%`;
     trendEl.className   = `ve-hs-value ve-hs-trend ${up ? 'up' : 'down'}`;
   } else {
