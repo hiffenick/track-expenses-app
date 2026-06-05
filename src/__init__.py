@@ -1,6 +1,7 @@
 import os
 from flask import Flask
 from src.extensions import bcrypt
+from src.extensions import limiter
 from src.extensions import csrf
 from flask_session import Session
 
@@ -11,6 +12,7 @@ from src.models.cateogries import Category
 from flask import session, redirect, url_for, request
 from flask_login import current_user
 from datetime import datetime, timezone ,timedelta
+from src.core.limit import register_rate_limit_handler
 
 from src.config import Config
 from flask_migrate import Migrate
@@ -43,15 +45,17 @@ def createapp():
     app = Flask(__name__, template_folder=templatepath, static_folder=staticpath)
     app.config.from_object(Config)
     Session(app)
-    
-    loginmanager.init_app(app)
+
     loginmanager.session_protection = "strong"
 
     migrate = Migrate(app,db)
+    loginmanager.init_app(app)
     csrf.init_app(app)
     bcrypt.init_app(app)
     db.init_app(app)
     mail.init_app(app)
+    limiter.init_app(app)
+    register_rate_limit_handler(app)
     register_session_middleware(app)
     loginmanager.login_view = 'login.login'
 

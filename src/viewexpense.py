@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, jsonify, request
 from flask_login import current_user, login_required
 from sqlalchemy import or_, extract,desc
 from datetime import datetime
-from src.extensions import db
+from src.extensions import db,limiter
 from src.models.cateogries import Category
 from src.models.expense import expenses as Expense   # adjust path if needed
 
@@ -24,6 +24,7 @@ def serialize(e):
     }
 
 @view_expenses_route.route('/viewexps', methods=['GET'])
+@limiter.limit("60 per minute")
 @login_required
 def viewexps():
     categories = Category.query.filter(
@@ -57,6 +58,7 @@ def viewexps():
 # ─────────────────────────────────────────────────────────────────────────────
 @view_expenses_route.route('/viewexps/chart-data', methods=['GET'])
 @login_required
+@limiter.limit("60 per minute")
 def chart_data():
     try:
         month = int(request.args.get('month', 0))   # 0 = all months
@@ -147,6 +149,7 @@ def chart_data():
 
 @view_expenses_route.route('/viewexps/expenses-data', methods=['GET'])
 @login_required
+@limiter.limit("60 per minute")
 def expenses_data():
     """
     Returns filtered, sorted expenses as JSON for the AJAX list renderer.
@@ -218,6 +221,8 @@ def expenses_data():
  
 @view_expenses_route.route("/delete-expense/<int:expense_id>", methods=["DELETE"])
 @login_required
+@limiter.limit("10 per minute")
+@limiter.limit("50 per day")
 def delete_expense(expense_id):
 
     exp = Expense.query.filter(
@@ -253,6 +258,8 @@ def delete_expense(expense_id):
     
 @view_expenses_route.route('/expenses/edit/<int:expense_id>', methods=['PUT'])
 @login_required
+@limiter.limit("30 per minute")
+@limiter.limit("200 per day")
 def edit_expense(expense_id):
 
     data = request.get_json()
@@ -297,6 +304,8 @@ def edit_expense(expense_id):
     
 @view_expenses_route.route('/api/expenses/<int:expense_id>/regret', methods=['PATCH'])
 @login_required
+@limiter.limit("30 per minute")
+@limiter.limit("300 per day")
 def tag_regret(expense_id):
     from flask import request as req
     data = req.get_json()

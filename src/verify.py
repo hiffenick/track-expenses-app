@@ -1,4 +1,5 @@
 from flask import Blueprint,redirect,url_for,render_template,request,session,flash
+from src.extensions import limiter
 from flask_login import current_user,login_user
 from datetime import datetime,timezone
 from src.wtform import Verify
@@ -8,6 +9,8 @@ verify_route = Blueprint('verify',__name__)
 
 
 @verify_route.route('/verify-otp', methods=['GET', 'POST'])
+@limiter.limit("10 per minute")
+@limiter.limit("20 per hour")
 def verify():
     if current_user.is_authenticated:
         return redirect(url_for('login.login'))

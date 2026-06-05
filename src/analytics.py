@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, jsonify,request
 from flask_login import login_required, current_user
-from src.extensions import db
+from src.extensions import db,limiter
 from src.models.expense import expenses
 from src.models.cateogries import Category
 from sqlalchemy import func, extract
@@ -13,6 +13,7 @@ analytics_route = Blueprint('analys', __name__)
 
 @analytics_route.route('/analytics', methods=['GET'])
 @login_required
+@limiter.limit("60 per minute")
 def analytics():
     return render_template('analytics.html',
                            analytics_data={},
@@ -104,6 +105,7 @@ def _resolve_period(period: str, today: date):
 # ──────────────────────────────────────────────────────────────
 @analytics_route.route('/api/analytics', methods=['GET'])
 @login_required
+@limiter.limit("30 per minute")
 def analytics_api():
     uid    = current_user.user_id
     today = date.today()
