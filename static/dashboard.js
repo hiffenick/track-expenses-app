@@ -366,9 +366,6 @@ function setGreeting() {
   else             el.textContent = 'Good evening 👋';
 }
 
-function bindNavigation() {
-    console.log("Navigation ready");
-}
 
 /* ── Init ─────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {

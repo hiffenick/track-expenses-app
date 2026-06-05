@@ -5,3 +5,4 @@ __pycache__/
 instance/
 migrations/__pycache__/
 migrations/versions/__pycache__/
+flask_sessions/

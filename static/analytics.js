@@ -580,21 +580,72 @@ function initStreak() {
    8. PERIOD SELECTOR
    HTML class: an-period-btn
 ════════════════════════════════ */
+/* ════════════════════════════════
+   8. PERIOD SELECTOR (hero strip)
+   Syncs with filter bar pills
+════════════════════════════════ */
+
+// Map hero strip data-period values → filter bar data-value equivalents
+const HERO_TO_FILTER = {
+  // "jun"  = current month  → this_month
+  // "may"  = previous month → last_month
+  // "3m"   = 3-month range  → this_year (reuse; or add a new backend period)
+  // "6m"   = 6-month range  → this_year
+};
+// We'll build this dynamically after we know current/prev month names (below).
+
 function initPeriodSelector() {
   document.querySelectorAll('.an-period-btn').forEach(btn => {
     btn.addEventListener('click', () => {
 
+      // 1. Mark hero strip active
       document.querySelectorAll('.an-period-btn')
         .forEach(b => b.classList.remove('active'));
-
       btn.classList.add('active');
 
-      FILTER_STATE.time = btn.dataset.period;
+      // 2. Map hero period → API period
+      const heroPeriod = btn.dataset.period;
+      const apiPeriod  = HERO_TO_FILTER[heroPeriod] || 'this_month';
 
+      // 3. Sync the filter-bar time pills
+      document.querySelectorAll('#timeFilterGroup .an-filter-pill')
+        .forEach(p => {
+          p.classList.toggle('active', p.dataset.value === apiPeriod);
+        });
+
+      // 4. Update state & fetch
+      FILTER_STATE.time = apiPeriod;
       applyFilters(FILTER_STATE);
     });
   });
 }
+
+/* ── Bottom: set hero button labels + build HERO_TO_FILTER map ── */
+const monthNames = ["Jan","Feb","Mar","Apr","May","Jun",
+                    "Jul","Aug","Sep","Oct","Nov","Dec"];
+const now          = new Date();
+const currentMonth = now.getMonth();               // 0-based
+const prevMonth    = (currentMonth - 1 + 12) % 12;
+
+const currentLabel = monthNames[currentMonth];     // e.g. "Jun"
+const prevLabel    = monthNames[prevMonth];        // e.g. "May"
+
+// Hero strip: first two buttons are PERIOD (current / previous month)
+const heroBtns = document.querySelectorAll('.an-period-btn');
+if (heroBtns[0]) heroBtns[0].querySelector('.an-pb-val').textContent = currentLabel;
+if (heroBtns[1]) heroBtns[1].querySelector('.an-pb-val').textContent = prevLabel;
+
+// Build the mapping now that we have the labels
+// data-period values are set lowercase in HTML: "may", "apr" etc.
+// We normalise by reading the actual rendered label.
+if (heroBtns[0]) heroBtns[0].dataset.period = 'cur';
+if (heroBtns[1]) heroBtns[1].dataset.period = 'prev';
+// 3M / 6M buttons stay as-is (data-period="3m" / "6m")
+
+HERO_TO_FILTER['cur']  = 'this_month';
+HERO_TO_FILTER['prev'] = 'last_month';
+HERO_TO_FILTER['3m']   = 'this_year';   // closest available; shows 3–6 months
+HERO_TO_FILTER['6m']   = 'this_year';
 
 /* ════════════════════════════════
    9. MOBILE SIDEBAR
@@ -625,9 +676,14 @@ function initSidebar() {
    STAT CARDS — populate on load
 ════════════════════════════════ */
 function initStatCards() {
-  // Total this month
-  const mayTotal = Object.values(DATA.mom).reduce((s, arr) => s + arr[5], 0);
-  const aprTotal = Object.values(DATA.mom).reduce((s, arr) => s + arr[4], 0);
+  const momArrays  = Object.values(DATA.mom);
+  const lastIdx    = momArrays.length > 0 ? momArrays[0].length - 1 : 0;
+  const prevIdx    = lastIdx - 1;
+
+  const mayTotal = momArrays.reduce((s, arr) => s + (arr[lastIdx] ?? 0), 0);
+  const aprTotal = prevIdx >= 0
+    ? momArrays.reduce((s, arr) => s + (arr[prevIdx] ?? 0), 0)
+    : 0;
   const diff     = mayTotal - aprTotal;
   const diffSign = diff >= 0 ? '+' : '';
 
@@ -802,6 +858,19 @@ async function applyFilters(state) {
    Wires up pill click + reset button.
    Call this once from initializeAnalytics().
 ──────────────────────────────────────────────────────────── */
+function syncHeroStrip(apiPeriod) {
+  const reverseMap = {
+    'this_month': 'cur',
+    'last_month': 'prev',
+    'this_year':  '6m',
+    'this_week':  null,
+  };
+  const target = reverseMap[apiPeriod] ?? null;
+  document.querySelectorAll('.an-period-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.period === target);
+  });
+}
+
 function initFilterBar() {
 
   /* ── Time pills ── */
@@ -809,13 +878,14 @@ function initFilterBar() {
     .querySelectorAll('.an-filter-pill')
     .forEach(pill => {
       pill.addEventListener('click', () => {
-        if (pill.dataset.value === FILTER_STATE.time) return; /* no-op */
+        if (pill.dataset.value === FILTER_STATE.time) return;
 
         document.querySelectorAll('#timeFilterGroup .an-filter-pill')
           .forEach(p => p.classList.remove('active'));
         pill.classList.add('active');
 
         FILTER_STATE.time = pill.dataset.value;
+        syncHeroStrip(FILTER_STATE.time);   // ← syncs hero strip
         applyFilters(FILTER_STATE);
       });
     });
@@ -825,7 +895,7 @@ function initFilterBar() {
     .querySelectorAll('.an-filter-pill')
     .forEach(pill => {
       pill.addEventListener('click', () => {
-        if (pill.dataset.value === FILTER_STATE.cat) return; /* no-op */
+        if (pill.dataset.value === FILTER_STATE.cat) return;
 
         document.querySelectorAll('#catFilterGroup .an-filter-pill')
           .forEach(p => p.classList.remove('active'));
@@ -841,26 +911,12 @@ function initFilterBar() {
     FILTER_STATE.time = 'this_month';
     FILTER_STATE.cat  = 'all';
 
-    /* reset pill UI */
     document.querySelectorAll('#timeFilterGroup .an-filter-pill')
       .forEach(p => p.classList.toggle('active', p.dataset.value === 'this_month'));
     document.querySelectorAll('#catFilterGroup .an-filter-pill')
       .forEach(p => p.classList.toggle('active', p.dataset.value === 'all'));
 
+    syncHeroStrip('this_month');   // ← resets hero strip to "Jun"
     applyFilters(FILTER_STATE);
   });
 }
-
-const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-
-const now = new Date();
-const currentMonth = now.getMonth(); // 0-based
-
-const current = monthNames[currentMonth];
-const previous = monthNames[(currentMonth - 1 + 12) % 12];
-
-document.querySelectorAll(".an-period-btn")[0]
-  .querySelector(".an-pb-val").textContent = current;
-
-document.querySelectorAll(".an-period-btn")[1]
-  .querySelector(".an-pb-val").textContent = previous;

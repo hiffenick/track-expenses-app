@@ -2,10 +2,15 @@ import os
 from flask import Flask
 from src.extensions import bcrypt
 from src.extensions import csrf
+from flask_session import Session
 
 from src.models.user import User
 from src.models.expense import expenses
 from src.models.cateogries import Category
+
+from flask import session, redirect, url_for, request
+from flask_login import current_user
+from datetime import datetime, timezone ,timedelta
 
 from src.config import Config
 from flask_migrate import Migrate
@@ -28,19 +33,26 @@ from src.extensions import loginmanager
 from src.dashboard import dashboard_route
 from src.addexpense import addexpense_route
 
+from src.core.middleware import register_session_middleware
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 staticpath = os.path.join(os.path.dirname(basedir),'static')
 templatepath = os.path.join(os.path.dirname(basedir),'templates')
+
 def createapp():
     app = Flask(__name__, template_folder=templatepath, static_folder=staticpath)
     app.config.from_object(Config)
+    Session(app)
     
     loginmanager.init_app(app)
+    loginmanager.session_protection = "strong"
+
     migrate = Migrate(app,db)
     csrf.init_app(app)
     bcrypt.init_app(app)
     db.init_app(app)
     mail.init_app(app)
+    register_session_middleware(app)
     loginmanager.login_view = 'login.login'
 
     app.register_blueprint(home_route)

@@ -79,12 +79,20 @@
 
     <div class="sidebar-footer">
       <div class="user-chip">
-        <div class="user-avatar"></div>
+        <div class="user-avatar">{{ user[0] | upper if user else 'U' }}</div>
         <div class="user-info">
-          <span class="user-name"></span>
+          <span class="user-name">{{ user }}</span>
           <span class="user-role">Personal Account</span>
         </div>
       </div>
+      <a href="{{ url_for('logout.logout') }}" class="logout-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Sign out
+      </a>
     </div>
   </aside>
 
@@ -134,7 +142,7 @@
           <p class="welcome-greeting">Track your spending</p>
           <h1 class="welcome-name">Add Expense</h1>
         </div>
-        <a href="" class="ae-back-btn">
+        <a href="{{ url_for('viewexp.viewexps')}}" class="ae-back-btn">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
           </svg>

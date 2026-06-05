@@ -250,7 +250,6 @@ async function emSave() {
   const amount = parseFloat(document.getElementById('emAmount').value);
   const title  = document.getElementById('emTitle').value.trim();
   const cat    = document.getElementById('emCategory').value;
-  console.log("CAT VALUE:", cat);
   const date   = document.getElementById('emDate').value;
   const note   = document.getElementById('emNote').value.trim();
 

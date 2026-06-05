@@ -32,7 +32,7 @@ def login():
             otp = str(random.randint(100000,999999))
             session['user_id'] = user.user_id
             session['otp'] = otp
-            session['otp-verified'] = False
+            session['otp_verified'] = False
 
             #Send Otp Main
             msg = Message(
@@ -52,7 +52,7 @@ def login():
 
             mail.send(msg)
 
-            print("OTP SENT:", otp)
+            # print("OTP SENT:", otp)
             return redirect(url_for('verify.verify'))
 
     return render_template('login.html',form = form)
