@@ -203,13 +203,13 @@ function renderGrid() {
               <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4z"/>
             </svg>
           </button>
-          <button class="ct-action-btn ct-action-btn--delete"
+          ${!cat.is_default ? `<button class="ct-action-btn ct-action-btn--delete"
             onclick="openDelete(${cat.id})" title="Delete">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polyline points="3 6 5 6 21 6"/>
               <path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/>
             </svg>
-          </button>
+          </button>` : ''}
         </div>
       </div>
     `;
@@ -284,12 +284,12 @@ function renderTable() {
             <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4z"/>
           </svg>
         </button>
-        <button class="ct-action-btn ct-action-btn--delete" onclick="openDelete(${cat.id})" title="Delete">
+        ${!cat.is_default ? `<button class="ct-action-btn ct-action-btn--delete" onclick="openDelete(${cat.id})" title="Delete">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="3 6 5 6 21 6"/>
             <path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/>
           </svg>
-        </button>
+        </button>` : ''}
       </div>
     `;
     body.appendChild(row);

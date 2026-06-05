@@ -54,6 +54,8 @@ const monthNames = [
   "Jul","Aug","Sep","Oct","Nov","Dec"
 ];
 
+let chartMode = 'daily';
+
 /* ═══════════════════════════════════════════════════════════════
    DATA BOOTSTRAP
 ═══════════════════════════════════════════════════════════════ */
@@ -210,7 +212,7 @@ function updateHero(filtered) {
   // current month total (based on UI selection, not system date)
   const thisTotal = RAW_EXPENSES
     .filter(e => {
-      if (e.is_regret) return false;
+      // if (e.is_regret) return false;
       const [ey, em] = e.date.split('-').map(Number);
       return ey === y && (m === 'all' || em === m);
     })
@@ -225,7 +227,7 @@ function updateHero(filtered) {
 
     lastTotal = RAW_EXPENSES
       .filter(e => {
-        if (e.is_regret) return false;
+        // if (e.is_regret) return false;
         const [ey, em] = e.date.split('-').map(Number);
         return ey === prevYear && em === prevMonth;
       })
@@ -704,6 +706,17 @@ function bindFilters() {
   });
 }
 
+/* Chart mode toggle */
+  document.getElementById('chartToggle')?.addEventListener('click', e => {
+    const btn = e.target.closest('.ve-ct-btn');
+    if (!btn) return;
+    chartMode = btn.dataset.mode;
+    document.querySelectorAll('.ve-ct-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.mode === chartMode)
+    );
+    render();
+  });
+  
 /* ═══════════════════════════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════════════════════════ */
@@ -745,7 +758,7 @@ function updateChartHeader(month, year, expenses) {
 
   // stats
   const total = expenses
-  .filter(e => !e.is_regret)
+  // .filter(e => !e.is_regret)
   .reduce((sum, e) => sum + Number(e.amount), 0);
   totalLabel.textContent = `₹${total.toLocaleString()}`;
   txLabel.textContent = expenses.length;
@@ -758,7 +771,7 @@ function getDaysInMonth(month, year) {
 
 //We convert expenses → daily buckets:
 function buildDailySeries(expenses, month, year) {
-  expenses = expenses.filter(e => !e.is_regret);
+  // expenses = expenses.filter(e => !e.is_regret);
   if (month === "all") {
     // Monthly series: Jan–Dec
     const months = Array(12).fill(0);
@@ -777,11 +790,16 @@ function buildDailySeries(expenses, month, year) {
   return days;
 }
 
+function buildCumulativeSeries(daily) {
+  let running = 0;
+  return daily.map(v => (running += v));
+}
+
 //💎 Create the chart (glow + smooth line)
 let chartInstance;
 
 function renderChart(dailyData) {
-  // console.log("🎯 renderChart called", dailyData);
+  const data = chartMode === 'cumulative' ? buildCumulativeSeries(dailyData) : dailyData;
   const canvas = document.getElementById("spendingChart");
   // console.log("📦 canvas:", canvas);
   if (!canvas) return;
@@ -827,7 +845,7 @@ function renderChart(dailyData) {
     data: {
       labels,
       datasets: [{
-        data: dailyData,
+        data: data,
         borderColor: "#a78bfa",
         backgroundColor: gradient,
         fill: true,
