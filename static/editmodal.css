@@ -31,7 +31,7 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius);
   width: 100%;
-  max-width: 520px;
+  max-width: 80vw !important;
   max-height: 90vh;
   overflow-y: auto;
   scrollbar-width: none;
@@ -402,5 +402,35 @@
   @keyframes emModalIn {
     from { opacity: 0; transform: translateY(40px); }
     to   { opacity: 1; transform: translateY(0); }
+  }
+}
+
+/* ── Compact modal for laptop screens ──────────────────────── */
+@media (min-width: 541px) {
+  .em-backdrop .em-amount-row   { padding: 10px 24px; }
+  .em-backdrop .em-currency     { font-size: 22px; }
+  .em-backdrop .em-amount-input { font-size: 28px; }
+  .em-backdrop .em-header       { padding: 14px 24px; }
+  .em-backdrop .em-fields       { padding: 12px 24px; gap: 10px; }
+  .em-backdrop .em-textarea     { min-height: 44px; }
+  .em-backdrop .em-actions      { padding: 10px 24px 14px; }
+
+  /* Fix: note field overflowing — stack date+note vertically */
+  .em-backdrop .em-row-2 {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .em-backdrop .em-cat-grid {
+    max-height: 120px !important;
+    overflow-y: auto !important;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+
+  .em-backdrop .em-cat-chip {
+    padding: 6px 9px;
+    font-size: 11.5px;
   }
 }
