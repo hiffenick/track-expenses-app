@@ -3,7 +3,7 @@ from flask_login import login_required,current_user
 from src.wtform import AddExpense
 from src.models.expense import expenses
 from src.models.cateogries import Category
-from src.extensions import db
+from src.extensions import db,limiter
 
 dashboard_route = Blueprint('dashboard',__name__)
 
@@ -12,6 +12,7 @@ from datetime import datetime
 
 @dashboard_route.route('/dashboard', methods=['GET', 'POST'])
 @login_required
+@limiter.limit("60 per minute")
 def dashboard():
     now = datetime.now()
 

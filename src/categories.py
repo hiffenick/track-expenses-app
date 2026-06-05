@@ -2,7 +2,7 @@ print("CATEGORIES FILE LOADED")
 
 from flask import Blueprint, render_template, request, jsonify
 from sqlalchemy import or_
-from src.extensions import db
+from src.extensions import db,limiter
 from src.models.cateogries import Category
 from src.models.expense import expenses
 from src.wtform import CategoryForm
@@ -88,6 +88,7 @@ def _build_categories_data(user_id):
 
 @categories_route.route('/categories', methods=['GET'])
 @login_required
+@limiter.limit("60 per minute")
 def categories():
     # Auto-seed if this user has never logged in before
     seed_default_categories(current_user.user_id)
@@ -103,6 +104,7 @@ def categories():
 
 @categories_route.route('/api/categories', methods=['GET'])
 @login_required
+@limiter.limit("60 per minute")
 def get_categories():
     # Auto-seed here too (covers direct API calls)
     seed_default_categories(current_user.user_id)
@@ -113,6 +115,8 @@ def get_categories():
 
 @categories_route.route('/api/categories', methods=['POST'])
 @login_required
+@limiter.limit("20 per minute")
+@limiter.limit("100 per day")
 def create_category():
     data = request.get_json()
     if not data:
@@ -138,6 +142,8 @@ def create_category():
 
 @categories_route.route('/api/categories/<int:cat_id>', methods=['PUT'])
 @login_required
+@limiter.limit("30 per minute")
+@limiter.limit("200 per day")
 def update_category(cat_id):
     # ✅ Only allow editing own categories
     cat = Category.query.filter(
@@ -161,6 +167,8 @@ def update_category(cat_id):
 
 @categories_route.route('/api/categories/<int:cat_id>', methods=['PATCH'])
 @login_required
+@limiter.limit("30 per minute")
+@limiter.limit("200 per day")
 def patch_category(cat_id):
     # ✅ Only allow patching own categories
     cat = Category.query.filter(
@@ -177,6 +185,8 @@ def patch_category(cat_id):
 
 @categories_route.route('/api/categories/<int:cat_id>', methods=['DELETE'])
 @login_required
+@limiter.limit("10 per minute")
+@limiter.limit("50 per day")
 def delete_category(cat_id):
     try:
         cat = Category.query.filter(

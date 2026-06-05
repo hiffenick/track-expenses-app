@@ -369,7 +369,7 @@ function setGreeting() {
 
 /* ── Init ─────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
-  bindNavigation();
+  // bindNavigation();
   updateDate();
   setGreeting();
   const data = loadSummaryData();

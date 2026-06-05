@@ -1,12 +1,14 @@
 from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import current_user
 from src.models.user import User
-from src.extensions import db, bcrypt
+from src.extensions import db, bcrypt ,limiter
 from src.wtform import Signup
 
 signup_route = Blueprint('signup', __name__)
 
 @signup_route.route('/signup', methods=['GET', 'POST'])
+@limiter.limit("5 per minute")
+@limiter.limit("20 per hour")
 def signup():
     print("\n================ SIGNUP HIT ================")
     print("METHOD:", request.method)

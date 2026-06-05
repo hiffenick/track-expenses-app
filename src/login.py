@@ -4,7 +4,7 @@ from flask_mail import Message
 from src.extensions import loginmanager,mail
 from flask_login import login_user,current_user
 from werkzeug.security import check_password_hash
-from src.extensions import bcrypt
+from src.extensions import bcrypt,limiter
 from src.models.user import User
 from src.wtform import LoginForm
 
@@ -16,6 +16,8 @@ def load_user(user_id):
 
 
 @login_route.route('/login',methods=['GET','POST'])
+@limiter.limit("10 per minute")        # max 10 attempts per minute per IP
+@limiter.limit("20 per hour")          # max 20 attempts per hour per IP
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('dashboard.dashboard'))
@@ -56,35 +58,3 @@ def login():
             return redirect(url_for('verify.verify'))
 
     return render_template('login.html',form = form)
-
-# @login_route.route('/login', methods=['GET', 'POST'])
-# def login():
-#     if current_user.is_authenticated:
-#         print("Already logged in")
-#         return redirect(url_for('dashboard.dashboard'))
-    
-#     form = LoginForm()
-
-#     if request.method == 'POST':
-#         print("Form submitted")
-#         if form.validate_on_submit():
-#             print("Form validated")
-#             user = User.query.filter_by(user_mail=form.email.data).first()
-#             print(f"User found: {user}")
-#             if user:
-#                 print(f"Checking password for: {user.user_mail}")
-#                 print(f"Stored hash: {user.user_pass}")
-#                 print(f"Entered password: {form.password.data}")
-#                 if bcrypt.check_password_hash(user.user_pass, form.password.data):
-#                     print("Login success!")
-#                     login_user(user, remember=True)
-#                     return redirect(url_for('dashboard.dashboard'))
-#                 else:
-#                     print("Password mismatch")
-#             else:
-#                 print("No user found with that email")
-#         else:
-#             print("Form validation failed")
-#             print(form.errors)
-
-#     return render_template('login.html', form=form)

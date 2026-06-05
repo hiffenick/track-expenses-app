@@ -14,8 +14,7 @@ from flask import (
 
 from flask_login import current_user, login_required
 from flask_mail import Message
-from src.extensions import bcrypt
-from src.extensions import db, mail
+from src.extensions import bcrypt,db, mail,limiter
 from src.wtform import EmailOTPForm, ChangePasswordForm ,DeleteAccountForm
 
 
@@ -27,6 +26,7 @@ profile_route = Blueprint('profile', __name__)
 # ================================
 @profile_route.route('/profile-settings', methods=['GET'])
 @login_required
+@limiter.limit("60 per minute")
 def profile():
     otp_form = EmailOTPForm()
     password_form = ChangePasswordForm()
@@ -47,6 +47,7 @@ def profile():
 # ================================
 @profile_route.route('/profile-settings', methods=['POST'])
 @login_required
+@limiter.limit("20 per minute")
 def update_profile():
     try:
         username = request.form.get('username')
@@ -71,6 +72,8 @@ def update_profile():
 # ================================
 @profile_route.route('/send-password-otp', methods=['POST'])
 @login_required
+@limiter.limit("5 per minute")       # sends email — strict
+@limiter.limit("10 per hour")
 def send_password_otp():
 
     try:
@@ -122,6 +125,8 @@ If this wasn't you, please secure your account.
 # ================================
 @profile_route.route('/verify-password-otp', methods=['POST'])
 @login_required
+@limiter.limit("5 per minute")       # OTP brute force protection
+@limiter.limit("10 per hour")
 def verify_password_otp():
 
     entered_otp = request.form.get('otp')
@@ -177,6 +182,8 @@ def verify_password_otp():
 # ================================
 @profile_route.route('/change-password', methods=['POST'])
 @login_required
+@limiter.limit("5 per minute")
+@limiter.limit("10 per hour")
 def change_password():
 
     password_form = ChangePasswordForm()
@@ -222,6 +229,8 @@ def change_password():
 
 @profile_route.route('/send-delete-otp', methods=['POST'])
 @login_required
+@limiter.limit("3 per minute")       # strictest — sends email + destructive
+@limiter.limit("5 per hour")
 def send_delete_otp():
 
     password = request.form.get('password')
@@ -272,6 +281,8 @@ If this wasn't you, ignore this email.
 
 @profile_route.route('/delete-account', methods=['POST'])
 @login_required
+@limiter.limit("3 per minute")       # strictest — irreversible action
+@limiter.limit("5 per hour")
 def delete_account():
     from flask_wtf.csrf import validate_csrf
     from wtforms import ValidationError
@@ -299,4 +310,3 @@ def delete_account():
         db.session.rollback()
         print("DELETE ACCOUNT ERROR:", e)
         return jsonify({"success": False, "message": "Something went wrong"}), 500
-

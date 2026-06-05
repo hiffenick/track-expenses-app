@@ -8,6 +8,7 @@ from datetime import datetime, date
 from flask_login import login_required
 from src.models.expense import expenses
 from src.wtform import ExpenseForm
+from src.extensions import limiter
 
 addexpense_route = Blueprint('addexpense', __name__)
 
@@ -15,6 +16,7 @@ addexpense_route = Blueprint('addexpense', __name__)
 # GET → Show Add Expense Page
 # =========================
 @addexpense_route.route("/add", methods=["GET"])
+@limiter.limit("60 per minute")
 @login_required
 def show_addexpense():
 
@@ -35,6 +37,8 @@ def show_addexpense():
 
 @addexpense_route.route('/create-category', methods=['POST'])
 @login_required
+@limiter.limit("20 per minute")
+@limiter.limit("100 per day")
 def create_category():
 
     data = request.get_json(force=True)
@@ -114,6 +118,8 @@ def create_category():
 
 @addexpense_route.route("/add", methods=["POST"])
 @login_required
+@limiter.limit("30 per minute")
+@limiter.limit("300 per day")
 def addexpense():
 
     form = ExpenseForm()

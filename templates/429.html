@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="text-align:center; padding: 80px 20px;">
+  <h1 style="font-size:48px">429</h1>
+  <p>Too many attempts. Please wait a moment and try again.</p>
+  <a href="{{ url_for('login.login') }}">← Back to login</a>
+</div>
+{% endblock %}
