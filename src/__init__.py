@@ -3,7 +3,7 @@ from flask import Flask
 from src.extensions import bcrypt
 from src.extensions import limiter
 from src.extensions import csrf
-from flask_session import Session
+# from flask_session import Session
 
 from src.models.user import User
 from src.models.expense import expenses
@@ -46,7 +46,7 @@ templatepath = os.path.join(os.path.dirname(basedir),'templates')
 def createapp():
     app = Flask(__name__, template_folder=templatepath, static_folder=staticpath)
     app.config.from_object(Config)
-    Session(app)
+    # Session(app)
 
     loginmanager.session_protection = "strong"
 
