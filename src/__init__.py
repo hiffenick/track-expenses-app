@@ -14,6 +14,8 @@ from flask_login import current_user
 from datetime import datetime, timezone ,timedelta
 from src.core.limit import register_rate_limit_handler
 
+from werkzeug.middleware.proxy_fix import ProxyFix
+
 from src.config import Config
 from flask_migrate import Migrate
 from src.extensions import db
@@ -73,5 +75,7 @@ def createapp():
     app.register_blueprint(categories_route)
     app.register_blueprint(view_expenses_route)
     app.register_blueprint(profile_route)
+
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 
     return app  
