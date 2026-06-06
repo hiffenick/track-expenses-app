@@ -23,7 +23,7 @@ class Config:
     MAIL_USERNAME       = os.getenv("MAIL_USERNAME")
     MAIL_PASSWORD       = os.getenv("MAIL_PASSWORD")
     MAIL_DEFAULT_SENDER = os.getenv("MAIL_DEFAULT_SENDER")
-    MAIL_USE_SSL = True
+    # MAIL_USE_SSL = os.getenv("MAIL_USE_SSL", "false").lower() in ['true', '1', 'yes']
 
     # ── Database ────────────────────────────────────────────────
     SQLALCHEMY_DATABASE_URI = os.getenv(
