@@ -243,3 +243,10 @@
   from { opacity: 0; }
   to   { opacity: 1; }
 }
+
+/* .profile-link{
+  gap:0.5em;
+  display: flex;
+  text-decoration: none; 
+  color: inherit;
+} */

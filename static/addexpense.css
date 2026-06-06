@@ -779,3 +779,10 @@
   flex-shrink: 0;
   opacity: 0.85;
 }
+
+.profile-link,
+.profile-link:visited,
+.profile-link:hover {
+    color: inherit;
+    text-decoration: none;
+}
