@@ -1,12 +1,14 @@
 import random
+import resend
 import os
 from flask import Blueprint, render_template, request, redirect, url_for, session
-from flask_mail import Message
-from src.extensions import loginmanager, mail
-from flask_login import current_user
+from src.extensions import loginmanager
+from flask_login import login_user, current_user
 from src.extensions import bcrypt, limiter
 from src.models.user import User
 from src.wtform import LoginForm
+
+resend.api_key = os.getenv("RESEND_API_KEY")
 
 login_route = Blueprint('login', __name__)
 
@@ -31,12 +33,12 @@ def login():
             session['otp'] = otp
             session['otp_verified'] = False
 
-            msg = Message(
-                subject="Your Expense Tracker OTP",
-                recipients=[user.user_mail]
-            )
-            msg.body = f"Hello {user.user_name},\n\nYour OTP is: {otp}\n\nDo not share this OTP with anyone.\n\n- Expense Tracker"
-            mail.send(msg)
+            resend.Emails.send({
+                "from": "onboarding@resend.dev",
+                "to": user.user_mail,
+                "subject": "Your Expense Tracker OTP",
+                "text": f"Hello {user.user_name},\n\nYour OTP is: {otp}\n\nDo not share this OTP with anyone.\n\n- Expense Tracker"
+            })
 
             return redirect(url_for('verify.verify'))
 
