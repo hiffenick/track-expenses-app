@@ -47,7 +47,7 @@ class Config:
 
     # Strict SameSite prevents CSRF via cross-site requests
     SESSION_COOKIE_SAMESITE = "Lax"
-    SESSION_TYPE = 'filesystem'
+    SESSION_TYPE = 'sqlalchemy'
     SESSION_FILE_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'flask_sessions')
     SESSION_USE_SIGNER = True
 
