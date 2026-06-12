@@ -89,7 +89,7 @@
   /* ── Countdown timer (10 min) ────────────────────────────── */
   const countdownEl  = document.getElementById('leftCountdown');
   const resendLink   = document.getElementById('resendLink');
-  let   totalSeconds = 10 * 60;
+  let   totalSeconds = 30;
 
   function formatTime(s) {
     const m = Math.floor(s / 60).toString().padStart(2, '0');
@@ -102,16 +102,16 @@
     countdownEl.textContent = formatTime(totalSeconds);
 
     if (totalSeconds <= 0) {
-      countdownEl.textContent = 'Expired';
-      countdownEl.style.color = '#f87171';
+      totalSeconds = 30;
+      countdownEl.style.color = '#f0f0f0ff';
       if (resendLink) resendLink.classList.remove('is-disabled');
-      return;
+      tickCountdown();
     }
 
-    if (totalSeconds <= 60) {
+    if (totalSeconds <= 10) {
       countdownEl.style.color = '#f87171';
     } else if (totalSeconds <= 180) {
-      countdownEl.style.color = '#facc15';
+      countdownEl.style.color = '#f4f4f4ff';
     }
 
     totalSeconds--;

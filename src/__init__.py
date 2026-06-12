@@ -3,7 +3,7 @@ from flask import Flask
 from src.extensions import bcrypt
 from src.extensions import limiter
 from src.extensions import csrf
-from flask_session import Session
+# from flask_session import Session
 
 from src.models.user import User
 from src.models.expense import expenses
@@ -13,6 +13,8 @@ from flask import session, redirect, url_for, request
 from flask_login import current_user
 from datetime import datetime, timezone ,timedelta
 from src.core.limit import register_rate_limit_handler
+
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from src.config import Config
 from flask_migrate import Migrate
@@ -44,7 +46,7 @@ templatepath = os.path.join(os.path.dirname(basedir),'templates')
 def createapp():
     app = Flask(__name__, template_folder=templatepath, static_folder=staticpath)
     app.config.from_object(Config)
-    Session(app)
+    # Session(app)
 
     loginmanager.session_protection = "strong"
 
@@ -73,5 +75,7 @@ def createapp():
     app.register_blueprint(categories_route)
     app.register_blueprint(view_expenses_route)
     app.register_blueprint(profile_route)
+
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 
     return app  

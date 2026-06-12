@@ -23,9 +23,11 @@ class Config:
     MAIL_USERNAME       = os.getenv("MAIL_USERNAME")
     MAIL_PASSWORD       = os.getenv("MAIL_PASSWORD")
     MAIL_DEFAULT_SENDER = os.getenv("MAIL_DEFAULT_SENDER")
+    # MAIL_USE_SSL = os.getenv("MAIL_USE_SSL", "false").lower() in ['true', '1', 'yes']
 
     # ── Database ────────────────────────────────────────────────
-    SQLALCHEMY_DATABASE_URI = (
+    SQLALCHEMY_DATABASE_URI = os.getenv(
+        "DATABASE_URL",
         f"mssql+pyodbc://{DB_USER}:{DB_PASS}@{DB_SERVER}/{DB_NAME}"
         "?driver=ODBC+Driver+17+for+SQL+Server"
     )
@@ -45,9 +47,9 @@ class Config:
 
     # Strict SameSite prevents CSRF via cross-site requests
     SESSION_COOKIE_SAMESITE = "Lax"
-    SESSION_TYPE = 'filesystem'
-    SESSION_FILE_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'flask_sessions')
-    SESSION_USE_SIGNER = True
+    # SESSION_TYPE = 'cookie'
+    # SESSION_FILE_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'flask_sessions')
+    # SESSION_USE_SIGNER = True
 
     # Cookie name (optional, obscures framework fingerprinting)
     SESSION_COOKIE_NAME = "expenso_session"
