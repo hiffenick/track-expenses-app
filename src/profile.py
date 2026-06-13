@@ -178,45 +178,30 @@ def verify_password_otp():
 @limiter.limit("5 per minute")
 @limiter.limit("10 per hour")
 def change_password():
-
     password_form = ChangePasswordForm()
-
     if not password_form.validate_on_submit():
         flash('Please check your inputs.', 'error')
         return redirect(url_for('profile.profile'))
-
-    # OTP CHECK
     if not session.get('password_otp_verified'):
         flash('OTP verification required.', 'error')
         return redirect(url_for('profile.profile'))
-
     current_password = request.form.get('current_password')
     new_password = request.form.get('new_password')
-
-    # verify current password
     if not bcrypt.check_password_hash(current_user.user_pass, current_password):
         flash('Current password is incorrect.', 'error')
         return redirect(url_for('profile.profile'))
-
     try:
-        current_user.user_pass = bcrypt.generate_password_hash(new_password)
+        current_user.user_pass = bcrypt.generate_password_hash(new_password).decode('utf-8')
         db.session.commit()
-
-        # cleanup session
         session.pop('password_otp_verified', None)
-
-        flash('Password changed successfully.Please Login Again', 'success')
+        flash('Password changed successfully. Please Login Again', 'success')
         logout_user()
-        return redirect(url_for('auth.login'))
-
+        return redirect(url_for('login.login'))
     except Exception as e:
         db.session.rollback()
         print("PASSWORD CHANGE ERROR:", e)
-
         flash('Something went wrong.', 'error')
-
     return redirect(url_for('profile.profile'))
-
 
 
 # replace with
