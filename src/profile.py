@@ -15,6 +15,8 @@ from flask_login import current_user, login_required
 from flask_mail import Message
 from src.extensions import bcrypt,db, mail,limiter
 from src.wtform import EmailOTPForm, ChangePasswordForm ,DeleteAccountForm
+from src.models.expense import expenses as Expense
+from src.models.cateogries import Category
 
 
 profile_route = Blueprint('profile', __name__)
@@ -253,8 +255,12 @@ def delete_account():
 
     try:
         user = current_user._get_current_object()
+        user_id = user.user_id
+
         logout_user()
 
+        Expense.query.filter_by(user_id=user_id).delete()
+        Category.query.filter_by(user_id=user_id).delete()
         db.session.delete(user)
         db.session.commit()
 
