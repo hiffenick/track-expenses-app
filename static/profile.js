@@ -200,45 +200,17 @@ function updateOtpStatus(message){
 
 let otpTimerInterval;
 
-function startOtpTimer(seconds){
-
+function startOtpTimer(){
   clearInterval(otpTimerInterval);
+  const timer = document.getElementById('otpTimer');
 
-  const timer =
-    document.getElementById('otpTimer');
+  function tick() {
+    const secondsLeft = 30 - (Math.floor(Date.now() / 1000) % 30);
+    timer.textContent = `00:${String(secondsLeft).padStart(2, '0')}`;
+  }
 
-  let remaining = seconds;
-
-  otpTimerInterval = setInterval(() => {
-
-    const mins =
-      String(Math.floor(remaining / 60))
-      .padStart(2, '0');
-
-    const secs =
-      String(remaining % 60)
-      .padStart(2, '0');
-
-    timer.textContent =
-      `${mins}:${secs}`;
-
-    if(remaining <= 0){
-
-      clearInterval(otpTimerInterval);
-
-      timer.textContent =
-        'Expired';
-
-      updateOtpStatus(
-        'OTP expired. Resend again.'
-      );
-
-    }
-
-    remaining--;
-
-  }, 1000);
-
+  tick(); // run immediately
+  otpTimerInterval = setInterval(tick, 1000);
 }
 
 
@@ -257,46 +229,15 @@ const closeOtpModal = document.getElementById('closeOtpModal');
 /* OTP FLOW (FIXED - NO 302 EXPECTED) */
 /* ============================ */
 
-
+// replace with
 document.getElementById('openOtpFlowBtn')
-?.addEventListener('click', async (e) => {
+?.addEventListener('click', (e) => {
   e.preventDefault();
-
-  // Show modal immediately, reset inputs, show loading state
   otpModal.classList.add('active');
   resetOtpInputs();
-  updateOtpStatus('Sending OTP…');
-
-  try {
-    const csrfToken = document.querySelector(
-      '#sendOtpForm input[name="csrf_token"]'
-    )?.value;
-
-    const response = await fetch('/send-password-otp', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      credentials: 'same-origin',
-      body: `csrf_token=${encodeURIComponent(csrfToken)}`
-    });
-
-    const data = await response.json();
-
-    if (response.ok && data.success) {
-      updateOtpStatus('OTP sent successfully 💌');
-      startOtpTimer(120);
-    } else {
-      updateOtpStatus(data.message || 'Failed to send OTP');
-      showToast(data.message || 'Failed to send OTP', 'error');
-    }
-
-  } catch (err) {
-    console.error(err);
-    updateOtpStatus('Something went wrong');
-    showToast('Something went wrong', 'error');
-  }
+  updateOtpStatus('Enter the code from your authenticator app');
+  startOtpTimer();
 });
-
-
 
 /* ============================ */
 /* VERIFY OTP SUBMIT (OPTIONAL AJAX IMPROVEMENT) */
@@ -354,7 +295,7 @@ if (result.success) {
               } else {
                   // password change flow
                   passwordModal.classList.add('active');
-                  showToast('OTP verified 🔐', 'success');
+                  showToast('Authenticator verified 🔐', 'success');
               }
 
           } else {
@@ -447,7 +388,7 @@ document.getElementById('deletePasswordForm')
     e.preventDefault();
 
     const btn = e.target.querySelector('button[type="submit"]');
-    if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+    if (btn) { btn.disabled = true; btn.textContent = 'Verifying...'; }
 
     try {
         const formData = new FormData(e.target);
@@ -466,8 +407,8 @@ document.getElementById('deletePasswordForm')
             deletePasswordModal.classList.remove('active');
             otpModal.classList.add('active');
             resetOtpInputs();
-            updateOtpStatus('OTP sent successfully 💌');
-            startOtpTimer(120);
+            updateOtpStatus('Enter the code from your authenticator app');
+            startOtpTimer();
         } else {
             showModalError('deleteErrorBanner', 'deleteErrorText', data.message || 'Incorrect password');
         }

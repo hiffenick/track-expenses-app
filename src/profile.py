@@ -1,6 +1,5 @@
-import random
-from flask_login import current_user, login_required, logout_user
-
+import random,pyotp
+from flask_login import current_user, login_required, logout_user 
 from flask import (
     Blueprint,
     render_template,
@@ -70,53 +69,53 @@ def update_profile():
 # ================================
 # SEND PASSWORD OTP (AJAX FIXED)
 # ================================
-@profile_route.route('/send-password-otp', methods=['POST'])
-@login_required
-@limiter.limit("5 per minute")       # sends email — strict
-@limiter.limit("10 per hour")
-def send_password_otp():
+# @profile_route.route('/send-password-otp', methods=['POST'])
+# @login_required
+# @limiter.limit("5 per minute")       # sends email — strict
+# @limiter.limit("10 per hour")
+# def send_password_otp():
 
-    try:
-        otp = str(random.randint(100000, 999999))
+#     try:
+#         otp = str(random.randint(100000, 999999))
 
-        # store OTP in session
-        session['password_change_otp'] = otp
-        session['password_otp_verified'] = False
-        session['otp_purpose'] = 'change_password'
+#         # store OTP in session
+#         session['password_change_otp'] = otp
+#         session['password_otp_verified'] = False
+#         session['otp_purpose'] = 'change_password'
 
-        print("OTP GENERATED:", otp)
-        print("SENDING TO:", current_user.user_mail)
+#         print("OTP GENERATED:", otp)
+#         print("SENDING TO:", current_user.user_mail)
 
-        msg = Message(
-            subject='Expenso Password Verification',
-            recipients=[current_user.user_mail]
-        )
+#         msg = Message(
+#             subject='Expenso Password Verification',
+#             recipients=[current_user.user_mail]
+#         )
 
-        msg.body = f"""
-Your Expenso verification code is:
+#         msg.body = f"""
+# Your Expenso verification code is:
 
-{otp}
+# {otp}
 
-This OTP will expire soon.
-If this wasn't you, please secure your account.
-"""
+# This OTP will expire soon.
+# If this wasn't you, please secure your account.
+# """
 
-        mail.send(msg)
+#         mail.send(msg)
 
-        print("MAIL SENT SUCCESSFULLY")
+#         print("MAIL SENT SUCCESSFULLY")
 
-        return jsonify({
-            "success": True,
-            "message": "OTP sent successfully"
-        }), 200
+#         return jsonify({
+#             "success": True,
+#             "message": "OTP sent successfully"
+#         }), 200
 
-    except Exception as e:
-        print("MAIL ERROR:", e)
+#     except Exception as e:
+#         print("MAIL ERROR:", e)
 
-        return jsonify({
-            "success": False,
-            "message": "Failed to send OTP"
-        }), 500
+#         return jsonify({
+#             "success": False,
+#             "message": "Failed to send OTP"
+#         }), 500
 
 
 
@@ -153,19 +152,13 @@ def verify_password_otp():
             "message": "Invalid OTP format"
         }), 400
 
-    stored_otp = session.get('password_change_otp')
+    if not current_user.totp_secret:
+        return jsonify({"success": False, "message": "Authenticator not set up"}), 400
 
-    if not stored_otp:
-        return jsonify({
-            "success": False,
-            "message": "OTP expired",
-        }), 400
+    totp = pyotp.TOTP(current_user.totp_secret)
 
-    if entered_otp != stored_otp:
-        return jsonify({
-            "success": False,
-            "message": "Incorrect OTP"
-        }), 400
+    if not totp.verify(entered_otp, valid_window=1):
+        return jsonify({"success": False, "message": "Incorrect OTP"}), 400
 
     session['password_otp_verified'] = True
 
@@ -210,7 +203,6 @@ def change_password():
         db.session.commit()
 
         # cleanup session
-        session.pop('password_change_otp', None)
         session.pop('password_otp_verified', None)
 
         flash('Password changed successfully.Please Login Again', 'success')
@@ -227,57 +219,36 @@ def change_password():
 
 
 
+# replace with
 @profile_route.route('/send-delete-otp', methods=['POST'])
 @login_required
-@limiter.limit("3 per minute")       # strictest — sends email + destructive
+@limiter.limit("3 per minute")
 @limiter.limit("5 per hour")
 def send_delete_otp():
 
     password = request.form.get('password')
-    
-    # 1. verify password
+
     if not bcrypt.check_password_hash(current_user.user_pass, password):
         return jsonify({
             "success": False,
             "message": "Incorrect password"
         }), 400
 
-    try:
-        otp = str(random.randint(100000, 999999))
-
-        session['password_change_otp'] = otp   # ← same key verify_password_otp checks
-        session['password_otp_verified'] = False
-        session['otp_purpose'] = 'delete_account'  
-
-        msg = Message(
-            subject="Confirm Account Deletion",
-            recipients=[current_user.user_mail]
-        )
-
-        msg.body = f"""
-Your OTP for account deletion is:
-
-{otp}
-
-This will expire soon.
-If this wasn't you, ignore this email.
-"""
-
-        mail.send(msg)
-
-        return jsonify({
-            "success": True,
-            "message": "OTP sent successfully"
-        }), 200
-
-    except Exception as e:
-        print("DELETE OTP ERROR:", e)
-
+    if not current_user.totp_secret:
         return jsonify({
             "success": False,
-            "message": "Failed to send OTP"
-        }), 500
-    
+            "message": "Authenticator not set up"
+        }), 400
+
+    session['password_otp_verified'] = False
+    session['otp_purpose'] = 'delete_account'
+
+    return jsonify({
+        "success": True,
+        "message": "Password verified"
+    }), 200
+
+
 
 @profile_route.route('/delete-account', methods=['POST'])
 @login_required
@@ -304,7 +275,7 @@ def delete_account():
 
         session.clear()
 
-        return jsonify({"success": True, "redirect": url_for('started.start')}), 200
+        return jsonify({"success": True, "redirect": url_for('home.home')}), 200
 
     except Exception as e:
         db.session.rollback()

@@ -72,6 +72,7 @@ function updateDate() {
   });
 }
 
+
 /* ── Summary data ─────────────────────────────────────────── */
 function loadSummaryData() {
   try {
@@ -80,7 +81,7 @@ function loadSummaryData() {
     if (!data) return;
 
     const fmt = v => v != null ? `₹${Number(v).toLocaleString('en-IN', { maximumFractionDigits: 2 })}` : '—';
-
+    
     const total   = document.getElementById('totalSpent');
     const monthly = document.getElementById('monthlySpent');
     const topCat  = document.getElementById('topCategory');

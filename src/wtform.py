@@ -157,4 +157,4 @@ class DeleteAccountForm(FlaskForm):
         validators=[DataRequired()]
     )
 
-    submit = SubmitField('Send OTP')
+    submit = SubmitField('Verify')

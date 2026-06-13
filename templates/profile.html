@@ -711,7 +711,7 @@
         </h3>
 
         <p class="ps-modal-subtitle">
-          We sent a verification code to your email.
+          Open your authenticator app and enter the 6-digit verification code to continue.
         </p>
       </div>
 
@@ -750,16 +750,16 @@
       </div>
 
       <div class="otp-timer" id="otpTimer">
-        02:00
+        00:30
       </div>
 
         <!-- <span class="otp-mail-text">
           Sent securely via email
         </span> -->
 
-        <button type="button" class="otp-resend-btn">
+        <!-- <button type="button" class="otp-resend-btn">
           Resend Code
-        </button>
+        </button> -->
 
       </div>
 
@@ -939,7 +939,7 @@
 </div>
 
   <button type="submit" class="ae-btn ae-btn-primary">
-      Send OTP
+      Verify
   </button>
       </form>
 
@@ -999,7 +999,7 @@
 
 <form
   method="POST"
-  action="{{ url_for('profile.send_password_otp') }}"
+  action="{{ url_for('profile.verify_password_otp') }}"
   id="sendOtpForm"
   style="display:none;"
 >
