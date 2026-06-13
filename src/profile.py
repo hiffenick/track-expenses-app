@@ -165,7 +165,7 @@ def verify_password_otp():
     return jsonify({
         "success": True,
         "message": "OTP verified successfully",
-        "purpose": session.get('otp_purpose', 'change_password')
+        "purpose": session.get('otp_purpose') or 'change_password'
     }), 200
 
 
