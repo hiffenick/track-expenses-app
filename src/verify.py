@@ -1,4 +1,5 @@
 from flask import Blueprint, redirect, url_for, render_template, request, session, flash
+from src.categories import seed_default_categories
 from src.extensions import limiter
 from flask_login import current_user, login_user
 from datetime import datetime, timezone
@@ -29,6 +30,7 @@ def verify():
 
         if totp.verify(entered_otp):
             session['otp_verified'] = True
+            seed_default_categories(user.user_id)
             login_user(user, remember=False)
             session.permanent = False
             session['_last_active'] = datetime.now(timezone.utc).timestamp()
