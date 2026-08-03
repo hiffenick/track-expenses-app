@@ -10,7 +10,7 @@ class Config:
     DB_USER     = os.getenv("DB_USER")
     DB_SERVER   = os.getenv("DB_SERVER")
     DB_PASS_RAW = os.getenv("DB_PASS")
-    DB_PASS     = quote_plus(DB_PASS_RAW)
+    DB_PASS = quote_plus(DB_PASS_RAW) if DB_PASS_RAW else ""
     DB_NAME     = os.getenv("DB_NAME")
 
     # ── Secret Key ──────────────────────────────────────────────
