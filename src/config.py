@@ -26,11 +26,17 @@ class Config:
     # MAIL_USE_SSL = os.getenv("MAIL_USE_SSL", "false").lower() in ['true', '1', 'yes']
 
     # ── Database ────────────────────────────────────────────────
+    # SQLALCHEMY_DATABASE_URI = os.getenv(
+    #     "DATABASE_URL",
+    #     f"mssql+pyodbc://{DB_USER}:{DB_PASS}@{DB_SERVER}/{DB_NAME}"
+    #     "?driver=ODBC+Driver+17+for+SQL+Server"
+    # )
+
     SQLALCHEMY_DATABASE_URI = os.getenv(
-        "DATABASE_URL",
-        f"mssql+pyodbc://{DB_USER}:{DB_PASS}@{DB_SERVER}/{DB_NAME}"
-        "?driver=ODBC+Driver+17+for+SQL+Server"
-    )
+    "DATABASE_URL",
+    f"postgresql://{DB_USER}:{DB_PASS}@{DB_SERVER}/{DB_NAME}"
+)
+
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # ── Session & Cookie Security ───────────────────────────────
